@@ -1,0 +1,906 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>CP Distribuidora Automotiva</title>
+<meta name="description" content="Peças, produtos de limpeza e acessórios para o seu carro em Xinguara – PA. Monte seu pedido e envie pelo WhatsApp.">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1B1C1F" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,100,400..700;1,115..125,800..900&display=swap">
+<style>
+/* Layout: loja de bairro com vitrine. Faixa de horário, cabeçalho fixo, vitrine com a fachada cortada no ângulo da logo, catálogo com filtros, marcas, como comprar, Instagram e a faixa grafite da loja. */
+:root{
+  --concreto:#F1EFEE;      /* fundo: cinza do reboco da fachada */
+  --papel:#FFFFFF;         /* superfícies */
+  --asfalto:#17181B;       /* grafite da marca */
+  --sinal:#D9141B;         /* vermelho CP */
+  --sinal-forte:#A80F14;   /* vermelho do chanfro da logo */
+  --tinta:#17181B;
+  --tinta-2:#55524F;
+  --linha:#DEDAD7;
+  --placa:#E6E3E0;         /* fundo dos produtos sem foto */
+  --sobre-sinal:#FFFFFF;
+  --faixa-txt:#F3F1EF;
+  --faixa-2:#B9B5B2;
+  --sombra:0 10px 30px -12px rgba(23,24,27,.28);
+  --estrela:#E8A200;
+  --logo-claro:block; --logo-escuro:none;
+  --display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --texto:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:12px;
+  --ph:#6A6663;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --concreto:#121214; --papel:#1B1C1F; --asfalto:#0B0B0D; --sinal:#EE2A30; --sinal-forte:#B8151B;
+    --tinta:#F1EFEE; --tinta-2:#ABA7A4; --linha:#2D2E32; --placa:#232428; --sobre-sinal:#FFFFFF;
+    --faixa-txt:#F1EFEE; --faixa-2:#A39F9C; --sombra:0 12px 34px -14px rgba(0,0,0,.7); --ph:#8F8B88;
+    --logo-claro:none; --logo-escuro:block; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --concreto:#121214; --papel:#1B1C1F; --asfalto:#0B0B0D; --sinal:#EE2A30; --sinal-forte:#B8151B;
+  --tinta:#F1EFEE; --tinta-2:#ABA7A4; --linha:#2D2E32; --placa:#232428; --sobre-sinal:#FFFFFF;
+  --faixa-txt:#F1EFEE; --faixa-2:#A39F9C; --sombra:0 12px 34px -14px rgba(0,0,0,.7); --ph:#8F8B88;
+  --logo-claro:none; --logo-escuro:block; color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:78px;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{background:var(--concreto);color:var(--tinta);font-family:var(--texto);font-size:1rem;line-height:1.55;
+  -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;caret-color:var(--sinal);overflow-x:hidden}
+::selection{background:var(--sinal);color:var(--sobre-sinal)}
+::placeholder{color:var(--ph);opacity:1}
+a,button,select,input{touch-action:manipulation}
+img{max-width:100%;display:block}
+a{color:inherit;text-underline-offset:.2em}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;touch-action:manipulation}
+:focus-visible{outline:2px solid var(--sinal);outline-offset:3px;border-radius:4px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.pular{position:absolute;left:16px;top:-60px;z-index:100;background:var(--sinal);color:var(--sobre-sinal);padding:.6rem 1rem;border-radius:6px;font-weight:700}
+.pular:focus{top:12px}
+.wrap{width:100%;max-width:1240px;margin-inline:auto;padding-inline:clamp(16px,4vw,40px)}
+svg.i{width:1.15em;height:1.15em;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+html{scrollbar-color:var(--tinta-2) var(--concreto)}
+
+/* Faixa de horário */
+.faixa{background:var(--asfalto);color:var(--faixa-txt);font-size:.82rem}
+.faixa .wrap{display:flex;flex-wrap:wrap;gap:.35rem 1.5rem;justify-content:space-between;padding-block:.5rem}
+.faixa span{display:inline-flex;align-items:center;gap:.45rem}
+.faixa svg{color:var(--sinal)}
+
+/* Cabeçalho */
+.topo{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:var(--papel);border-bottom:1px solid var(--linha)}
+.topo .wrap{display:flex;align-items:center;gap:1.5rem;padding-block:.7rem}
+.marca{display:flex;align-items:center;flex:none}
+.marca img{height:54px;width:auto}
+.marca .l1{display:var(--logo-claro)} .marca .l2{display:var(--logo-escuro)}
+.nav{display:flex;gap:.25rem;margin-left:auto}
+.nav a{text-decoration:none;font-weight:600;font-size:.95rem;padding:.5rem .8rem;border-radius:6px;color:var(--tinta-2);transition:color .15s ease,background-color .15s ease}
+.nav a:hover{color:var(--tinta);background:var(--concreto)}
+.nav a[aria-current="true"]{color:var(--tinta);box-shadow:inset 0 -2px 0 var(--sinal);border-radius:6px 6px 0 0}
+.ir-loja{display:none}
+.btn-pedido{display:inline-flex;align-items:center;gap:.55rem;background:var(--tinta);color:var(--concreto);border:0;border-radius:8px;padding:.62rem 1rem;font-weight:700;font-size:.95rem;transition:background-color .15s ease,transform .15s ease}
+.btn-pedido:hover{background:var(--sinal);color:var(--sobre-sinal)}
+.btn-pedido:active{transform:scale(.97)}
+.contador{min-width:1.5rem;height:1.5rem;display:inline-grid;place-items:center;border-radius:99px;background:var(--sinal);color:var(--sobre-sinal);font-size:.78rem;font-variant-numeric:tabular-nums;padding-inline:.35rem}
+.btn-pedido:hover .contador{background:var(--sobre-sinal);color:var(--sinal)}
+.contador.zero,.btn-pedido:hover .contador.zero{background:color-mix(in srgb,var(--concreto) 22%,transparent);color:var(--concreto)}
+.contador.pulo{animation:pulo .35s cubic-bezier(.2,.9,.3,1.4)}
+@keyframes pulo{from{transform:scale(1.45)}to{transform:scale(1)}}
+
+/* Vitrine */
+.vitrine .wrap{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:clamp(2rem,5vw,4.5rem);align-items:center;padding-block:clamp(2.5rem,6vw,5rem) clamp(3rem,6vw,5.5rem)}
+.vitrine h1{font-family:var(--display);font-style:italic;font-weight:850;font-stretch:122%;font-size:clamp(2.6rem,6.2vw,5.3rem);line-height:.94;letter-spacing:-.025em;margin:0 0 1.4rem;text-wrap:balance}
+.vitrine p.lead{font-size:clamp(1.05rem,1.4vw,1.2rem);color:var(--tinta-2);max-width:34rem;margin:0 0 2rem;text-wrap:pretty}
+.acoes{display:flex;flex-wrap:wrap;gap:.75rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.55rem;border-radius:8px;padding:.85rem 1.3rem;font-weight:700;text-decoration:none;border:1.5px solid transparent;transition:background-color .15s ease,color .15s ease,border-color .15s ease,transform .15s ease}
+.btn:active{transform:scale(.97)}
+.btn-sinal{background:var(--sinal);color:var(--sobre-sinal)}
+.btn-sinal:hover{background:var(--sinal-forte)}
+.btn-linha{border-color:var(--tinta);color:var(--tinta);background:transparent}
+.btn-linha:hover{background:var(--tinta);color:var(--concreto)}
+.nota-google{display:flex;align-items:center;gap:.6rem;margin-top:2.2rem;font-size:.92rem;color:var(--tinta-2)}
+.nota-google b{color:var(--tinta);font-variant-numeric:tabular-nums}
+.estrelas{display:flex;gap:2px;color:var(--estrela)}
+.estrelas svg{width:1rem;height:1rem;fill:currentColor;stroke:none}
+
+.fachada{margin:0}
+.moldura{position:relative;padding:0 1.25rem 1.25rem 0}
+.moldura::before{content:"";position:absolute;inset:1.25rem 0 0 1.25rem;background:var(--sinal);clip-path:polygon(17% 0,100% 0,83% 100%,0 100%)}
+.fachada img{position:relative;width:100%;height:auto;aspect-ratio:744/868;object-fit:cover;clip-path:polygon(17% 0,100% 0,83% 100%,0 100%);animation:abre .9s cubic-bezier(.16,1,.3,1) both}
+@keyframes abre{from{clip-path:polygon(17% 0,17% 0,0 100%,0 100%)}to{clip-path:polygon(17% 0,100% 0,83% 100%,0 100%)}}
+.fachada figcaption{margin:.6rem 0 0 auto;text-align:right;font-size:.85rem;color:var(--tinta-2)}
+@media (prefers-reduced-motion: reduce){.fachada img{animation:none}}
+
+/* Seções */
+.secao{padding-block:clamp(3rem,7vw,5.5rem)}
+.titulo{font-family:var(--display);font-style:italic;font-weight:800;font-stretch:115%;font-size:clamp(1.9rem,3.6vw,2.8rem);line-height:1;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.sub{color:var(--tinta-2);margin:.7rem 0 0;max-width:40rem}
+.cabeca{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:1rem 2rem;margin-bottom:2rem}
+
+/* Catálogo */
+#produtos{background:var(--papel);border-block:1px solid var(--linha)}
+.ferramentas{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1rem;align-items:center;margin-bottom:1rem}
+.busca{position:relative}
+.busca svg{position:absolute;left:.9rem;top:50%;translate:0 -50%;color:var(--tinta-2);pointer-events:none}
+.busca input{width:100%;border:1.5px solid var(--linha);background:var(--concreto);border-radius:8px;padding:.8rem 1rem .8rem 2.6rem;font-size:1rem;transition:border-color .15s ease}
+.busca input:hover{border-color:var(--tinta-2)}
+.busca input:focus-visible{outline:none;border-color:var(--sinal)}
+.busca input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;width:1.1rem;height:1.1rem;cursor:pointer;background:var(--tinta-2);-webkit-mask:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222.5%22 stroke-linecap=%22round%22%3E%3Cpath d=%22M18 6 6 18M6 6l12 12%22/%3E%3C/svg%3E') center/contain no-repeat;mask:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%222.5%22 stroke-linecap=%22round%22%3E%3Cpath d=%22M18 6 6 18M6 6l12 12%22/%3E%3C/svg%3E') center/contain no-repeat}
+.ordem{display:flex;align-items:center;gap:.6rem;font-size:.92rem;color:var(--tinta-2)}
+.sel{position:relative;display:flex}
+.sel svg{position:absolute;right:.75rem;top:50%;translate:0 -50%;pointer-events:none;color:var(--tinta-2)}
+.ordem select{-webkit-appearance:none;appearance:none;width:100%;border:1.5px solid var(--linha);background:var(--concreto);color:var(--tinta);border-radius:8px;padding:.72rem 2.4rem .72rem .9rem;font-size:.95rem;cursor:pointer;transition:border-color .15s ease}
+.ordem select:hover{border-color:var(--tinta-2)}
+.ordem select:focus-visible{outline:none;border-color:var(--sinal)}
+.chips{display:flex;gap:.5rem;overflow-x:auto;padding-bottom:.4rem;margin-bottom:1.6rem;scrollbar-width:thin;overscroll-behavior-x:contain}
+.chip{flex:none;display:inline-flex;align-items:center;gap:.5rem;border:1.5px solid var(--linha);background:transparent;border-radius:99px;padding:.5rem .95rem;font-weight:600;font-size:.92rem;color:var(--tinta-2);transition:border-color .15s ease,color .15s ease,background-color .15s ease}
+.chip:hover{border-color:var(--tinta);color:var(--tinta)}
+.chip[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);color:var(--concreto)}
+.chip small{font-size:.78rem;font-variant-numeric:tabular-nums;opacity:.75}
+.aviso{display:flex;gap:.6rem;align-items:flex-start;font-size:.9rem;color:var(--tinta-2);margin:0 0 1.5rem}
+.aviso svg{color:var(--sinal);margin-top:.2rem}
+
+.grade{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.25rem}
+.produto{display:flex;flex-direction:column;background:var(--papel);border:1px solid var(--linha);border-radius:var(--r);overflow:hidden;min-width:0;transition:border-color .2s ease}
+.produto:hover,.produto:focus-within{border-color:var(--tinta-2)}
+.midia{position:relative;aspect-ratio:1/1;background:var(--placa);overflow:hidden;border:0;padding:0;width:100%;display:block}
+.midia img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.16,1,.3,1)}
+.produto:hover .midia img{transform:scale(1.04)}
+.placa{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:1rem}
+.placa::before,.placa::after{content:"";position:absolute;background:var(--sinal);width:14%;height:150%;top:-25%;left:-2%;transform:skewX(-28deg)}
+.placa::after{left:11%;width:3%;opacity:.55}
+.placa span{position:relative;z-index:1;font-family:var(--display);font-style:italic;font-weight:850;font-stretch:125%;font-size:clamp(1.6rem,3vw,2.2rem);letter-spacing:-.02em;line-height:1;color:var(--tinta);max-width:100%;overflow-wrap:anywhere}
+.info{display:flex;flex-direction:column;gap:.3rem;padding:1rem 1rem 1.1rem;flex:1;min-width:0}
+.cat{font-size:.8rem;color:var(--sinal);font-weight:700}
+.nome{border:0;background:none;padding:0;text-align:left;font-weight:700;font-size:1.02rem;line-height:1.3;color:var(--tinta);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nome:hover{text-decoration:underline}
+.espec{font-size:.88rem;color:var(--tinta-2)}
+.preco{font-size:.88rem;color:var(--tinta-2);margin-top:auto;padding-top:.5rem}
+.preco b{color:var(--tinta)}
+.add{margin-top:.6rem;display:inline-flex;align-items:center;justify-content:center;gap:.45rem;width:100%;border:1.5px solid var(--tinta);background:transparent;border-radius:8px;padding:.62rem .8rem;font-weight:700;font-size:.92rem;transition:background-color .15s ease,color .15s ease,transform .15s ease}
+.add:hover{background:var(--tinta);color:var(--concreto)}
+.add.forte{background:var(--sinal);border-color:var(--sinal);color:var(--sobre-sinal);padding:.85rem 1rem;font-size:1rem}
+.add.forte:hover{background:var(--sinal-forte);border-color:var(--sinal-forte)}
+.ficha .qtd button{height:3rem}
+.add:active{transform:scale(.97)}
+.estoque{font-size:.8rem;font-weight:700;color:var(--tinta-2)}
+.estoque.zero{color:var(--sinal)}
+.produto.esgotado .midia{opacity:.55}
+.add.avisar{border-style:dashed;color:var(--tinta-2);text-decoration:none}
+
+.qtd{margin-top:.6rem;display:grid;grid-template-columns:2.6rem 1fr 2.6rem;align-items:center;border:1.5px solid var(--sinal);border-radius:8px;overflow:hidden}
+.qtd button{border:0;background:transparent;height:2.5rem;display:grid;place-items:center;color:var(--sinal);transition:background-color .15s ease}
+.qtd button:hover{background:color-mix(in srgb,var(--sinal) 12%,transparent)}
+.qtd output{text-align:center;font-weight:700;font-variant-numeric:tabular-nums;font-size:.95rem}
+.vazio{grid-column:1/-1;padding:3rem 1rem;text-align:center;color:var(--tinta-2)}
+.vazio strong{display:block;color:var(--tinta);font-size:1.15rem;margin-bottom:.4rem}
+.vazio .acoes{justify-content:center;margin-top:1.4rem}
+
+/* Marcas */
+.marcas-lista{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--linha)}
+.marcas-lista a{display:flex;flex-direction:column;justify-content:space-between;gap:1.2rem;padding:1.6rem 1.25rem 1.4rem;border-bottom:1px solid var(--linha);border-right:1px solid var(--linha);text-decoration:none;min-width:0;transition:background-color .2s ease}
+.marcas-lista a:first-child{border-left:1px solid var(--linha)}
+.marcas-lista a:hover{background:var(--papel)}
+.marcas-lista strong{font-family:var(--display);font-style:italic;font-weight:850;font-stretch:120%;font-size:clamp(1.35rem,2.4vw,1.9rem);letter-spacing:-.02em;line-height:1.05}
+.marcas-lista span{display:inline-flex;align-items:center;gap:.4rem;font-size:.88rem;color:var(--tinta-2)}
+.marcas-lista a:hover span{color:var(--sinal)}
+
+/* Como comprar */
+#como{background:var(--papel);border-block:1px solid var(--linha)}
+.passos{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(1.5rem,4vw,3rem);counter-reset:p}
+.passos li{counter-increment:p;min-width:0}
+.passos li::before{content:counter(p);display:block;font-family:var(--display);font-style:italic;font-weight:850;font-stretch:125%;font-size:3.4rem;line-height:1;color:var(--sinal);margin-bottom:.8rem}
+.passos h3{margin:0 0 .4rem;font-size:1.15rem}
+.passos p{margin:0;color:var(--tinta-2);max-width:30ch}
+
+/* Instagram */
+.insta{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.6rem}
+.insta a{display:block;aspect-ratio:1/1;overflow:hidden;border-radius:6px;background:var(--placa)}
+.insta img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.16,1,.3,1),filter .3s ease}
+.insta a:hover img{transform:scale(1.05)}
+
+/* Loja */
+#loja{background:var(--asfalto);color:var(--faixa-txt)}
+#loja .wrap{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:clamp(2rem,5vw,4rem);align-items:end}
+.endereco{font-family:var(--display);font-style:italic;font-weight:850;font-stretch:122%;font-size:clamp(2.3rem,5.4vw,4.4rem);line-height:.95;letter-spacing:-.025em;margin:.6rem 0 1rem;text-wrap:balance}
+#loja .sub{color:var(--faixa-2)}
+#loja .btn-linha{border-color:var(--faixa-txt);color:var(--faixa-txt)}
+#loja .btn-linha:hover{background:var(--faixa-txt);color:var(--asfalto)}
+.dados{display:grid;gap:1.4rem}
+.dado{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.2rem 1rem;align-items:start;padding-bottom:1.4rem;border-bottom:1px solid color-mix(in srgb,var(--faixa-txt) 16%,transparent)}
+.dado:last-child{border-bottom:0;padding-bottom:0}
+.dado svg{color:var(--sinal);margin-top:.25rem;width:1.3rem;height:1.3rem}
+.dado h3{margin:0;font-size:.85rem;font-weight:600;color:var(--faixa-2)}
+.dado p{margin:0;font-size:1.05rem;font-variant-numeric:tabular-nums}
+.copiar{display:inline-flex;align-items:center;gap:.4rem;margin-top:.2rem;border:0;background:none;color:var(--faixa-txt);font-size:.88rem;font-weight:600;padding:.6rem 0;min-height:44px;text-decoration:underline;text-underline-offset:.25em}
+.copiar:hover{color:var(--sinal)}
+#loja .acoes{margin-top:1.8rem}
+
+/* Rodapé */
+.rodape{background:var(--asfalto);color:var(--faixa-2);border-top:1px solid color-mix(in srgb,var(--faixa-txt) 12%,transparent);font-size:.9rem}
+.rodape .wrap{display:flex;flex-wrap:wrap;gap:1.2rem 2rem;align-items:center;justify-content:space-between;padding-block:2rem calc(2rem + env(safe-area-inset-bottom,0px))}
+.rodape img{height:40px;width:auto}
+.rodape nav{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem}
+.rodape a{color:var(--faixa-txt);text-decoration:none}
+.rodape a:hover{color:var(--sinal);text-decoration:underline}
+
+/* Painéis (pedido e produto) */
+dialog{border:0;padding:0;color:var(--tinta);background:var(--papel);overscroll-behavior:contain}
+dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
+.gaveta{margin:0 0 0 auto;height:100%;max-height:100%;width:min(440px,100%);max-width:100%;flex-direction:column}
+.gaveta[open]{display:flex}
+.gaveta[open]{animation:entra .35s cubic-bezier(.16,1,.3,1)}
+@keyframes entra{from{transform:translateX(40px);opacity:.4}to{transform:none;opacity:1}}
+.g-topo{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:calc(1.1rem + env(safe-area-inset-top,0px)) 1.25rem 1.1rem;border-bottom:1px solid var(--linha)}
+.g-topo h2{margin:0;font-family:var(--display);font-style:italic;font-weight:800;font-stretch:115%;font-size:1.6rem;letter-spacing:-.02em}
+.fechar{width:2.6rem;height:2.6rem;border-radius:8px;border:0;background:var(--concreto);display:grid;place-items:center;transition:background-color .15s ease}
+.fechar:hover{background:var(--linha)}
+.g-corpo{flex:1;overflow-y:auto;padding:1.25rem;overscroll-behavior:contain}
+.itens{list-style:none;margin:0;padding:0;display:grid;gap:1rem}
+.item{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:.9rem;align-items:center;padding-bottom:1rem;border-bottom:1px solid var(--linha)}
+.item .mini{width:64px;height:64px;border-radius:6px;background:var(--placa);overflow:hidden;position:relative}
+.item .mini img{width:100%;height:100%;object-fit:cover}
+.item .mini .placa{padding:.25rem}
+.item .mini .placa span{font-size:.78rem;overflow-wrap:normal;white-space:nowrap}
+.item b{display:block;font-size:.95rem;line-height:1.3}
+.item small{color:var(--tinta-2);font-size:.82rem}
+.item .qtd{margin-top:.5rem;width:9rem;grid-template-columns:2.6rem 1fr 2.6rem}
+.item .qtd button{height:2.5rem}
+.remover{border:0;background:none;color:var(--tinta-2);width:2.75rem;height:2.75rem;border-radius:6px;display:grid;place-items:center}
+.remover:hover{color:var(--sinal);background:var(--concreto)}
+.campo{display:grid;gap:.4rem;margin-top:1.4rem}
+.campo label{font-weight:600;font-size:.9rem}
+.campo input,.campo textarea{border:1.5px solid var(--linha);background:var(--concreto);border-radius:8px;padding:.75rem .9rem;font-size:1rem;resize:vertical}
+.campo input:focus-visible,.campo textarea:focus-visible{outline:none;border-color:var(--sinal)}
+.g-pe{padding:1.1rem 1.25rem calc(1.1rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--linha);display:grid;gap:.6rem}
+.g-pe .resumo{display:flex;justify-content:space-between;font-size:.92rem;color:var(--tinta-2)}
+.g-pe .resumo b{color:var(--tinta);font-variant-numeric:tabular-nums}
+.g-pe .btn{width:100%}
+.g-pe .btn-linha{padding:.7rem 1rem;font-size:.92rem}
+.pedido-vazio{text-align:center;padding:3rem 1rem;color:var(--tinta-2)}
+.pedido-vazio strong{display:block;color:var(--tinta);font-size:1.15rem;margin-bottom:.4rem}
+.pedido-vazio .btn{margin-top:1.4rem}
+
+.ficha{margin:auto;width:min(860px,calc(100% - 32px));max-height:calc(100% - 32px);border-radius:14px;overflow:hidden}
+.ficha[open]{animation:sobe .35s cubic-bezier(.16,1,.3,1)}
+@keyframes sobe{from{transform:translateY(16px);opacity:.4}to{transform:none;opacity:1}}
+.ficha-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);max-height:calc(100dvh - 32px)}
+.ficha .midia{aspect-ratio:auto;min-height:100%}
+.ficha .placa span{font-size:clamp(2.4rem,6vw,3.6rem)}
+.ficha-txt{padding:1.6rem;overflow-y:auto;display:flex;flex-direction:column;gap:.7rem;position:relative}
+.ficha-txt .fechar{position:absolute;right:1rem;top:1rem}
+.ficha-txt h2{margin:0;padding-right:3rem;font-size:1.55rem;line-height:1.15;text-wrap:balance}
+.ficha-txt p{margin:0;color:var(--tinta-2)}
+.ficha-txt dl{display:grid;grid-template-columns:auto 1fr;gap:.4rem 1rem;margin:.4rem 0;font-size:.92rem}
+.ficha-txt dt{color:var(--tinta-2)}
+.ficha-txt dd{margin:0;font-weight:600}
+.ficha-txt .acoes{margin-top:auto;padding-top:1rem;flex-direction:column}
+.ficha-txt .acoes .btn{width:100%}
+
+/* Aviso flutuante e barra do celular */
+.avisos{position:fixed;left:50%;translate:-50% 0;bottom:calc(1.2rem + env(safe-area-inset-bottom,0px));z-index:60;display:grid;gap:.5rem;width:min(420px,calc(100% - 32px));pointer-events:none}
+.toast{pointer-events:auto;display:flex;align-items:center;justify-content:space-between;gap:1rem;background:var(--tinta);color:var(--concreto);border-radius:10px;padding:.8rem 1rem;font-size:.92rem;box-shadow:var(--sombra);animation:toast .3s cubic-bezier(.16,1,.3,1)}
+.toast button{border:0;background:none;color:inherit;font-weight:700;padding:.2rem .4rem;text-decoration:underline;text-underline-offset:.2em}
+@keyframes toast{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+.barra-cel{display:none}
+
+@media (max-width: 900px){
+  .vitrine .wrap{grid-template-columns:1fr}
+  .fachada{max-width:520px}
+  #loja .wrap{grid-template-columns:1fr}
+  .marcas-lista{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grade{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .marcas-lista a:nth-child(3){border-left:1px solid var(--linha)}
+  .ficha-grid{grid-template-columns:1fr}
+  .ficha .midia{aspect-ratio:16/10;min-height:0}
+  .ficha{overflow-y:auto}
+  .ficha-grid{max-height:none}
+  .ficha-txt{overflow:visible}
+}
+@media (max-width: 760px){
+  .nav{display:none}
+  .btn-pedido{margin-left:auto}
+  .topo .wrap{gap:.6rem}
+  .ir-loja{display:grid;place-items:center;width:2.9rem;height:2.9rem;border-radius:8px;color:var(--tinta);background:var(--concreto);margin-left:auto}
+  .ir-loja + .btn-pedido{margin-left:0}
+  .vitrine .acoes .btn{flex:1 1 100%}
+  .btn-pedido .txt{display:none}
+  .marca img{height:44px}
+  .ferramentas{grid-template-columns:1fr}
+  .ordem{justify-content:space-between}
+  .ordem select{flex:1}
+  .passos{grid-template-columns:1fr}
+  .insta{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .insta a:nth-child(n+4){display:none}
+  .grade{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
+  .info{padding:.8rem .8rem .9rem}
+  .nome{font-size:.95rem}
+  .barra-cel{position:fixed;left:0;right:0;bottom:0;z-index:45;padding:.7rem 16px calc(.7rem + env(safe-area-inset-bottom,0px));background:var(--papel);border-top:1px solid var(--linha)}
+  .barra-cel.ativa{display:block}
+  .barra-cel .btn{width:100%}
+  body.com-barra .avisos{bottom:calc(5.2rem + env(safe-area-inset-bottom,0px))}
+  body.com-barra .rodape .wrap{padding-bottom:calc(6rem + env(safe-area-inset-bottom,0px))}
+}
+@media (max-width: 420px){
+  .marcas-lista{grid-template-columns:1fr}
+  .marcas-lista a{border-left:1px solid var(--linha)}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-busca" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-sacola" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></symbol>
+  <symbol id="i-mais" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+  <symbol id="i-menos" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+  <symbol id="i-pino" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-relogio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+  <symbol id="i-insta" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/></symbol>
+  <symbol id="i-lixo" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></symbol>
+  <symbol id="i-estrela" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+  <symbol id="i-copiar" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+  <symbol id="i-baixo" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-seta" viewBox="0 0 24 24"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></symbol>
+</svg>
+
+<a class="pular" href="#produtos">Pular para os produtos</a>
+
+<div class="faixa">
+  <div class="wrap">
+    <span><svg class="i" aria-hidden="true"><use href="#i-relogio"/></svg>Funcionamos das 08h às 11h e das 13h às 18h</span>
+    <span><svg class="i" aria-hidden="true"><use href="#i-pino"/></svg>Rua Pioneiro, 791, Marajoara, Xinguara – PA</span>
+  </div>
+</div>
+
+<header class="topo">
+  <div class="wrap">
+    <a class="marca" href="#inicio" aria-label="CP Distribuidora Automotiva, início">
+      <img class="l1" src="img/logo.png" width="300" height="176" alt="CP Distribuidora Automotiva">
+      <img class="l2" src="img/logo-dark.png" width="300" height="176" alt="CP Distribuidora Automotiva">
+    </a>
+    <nav class="nav" aria-label="Seções">
+      <a href="#produtos">Produtos</a>
+      <a href="#marcas">Marcas</a>
+      <a href="#como">Como comprar</a>
+      <a href="#loja">A loja</a>
+    </nav>
+    <a class="ir-loja" href="#loja" aria-label="Endereço e horário da loja"><svg class="i" aria-hidden="true"><use href="#i-pino"/></svg></a>
+    <button class="btn-pedido" type="button" id="abrirPedido" aria-label="Abrir seu pedido">
+      <svg class="i" aria-hidden="true"><use href="#i-sacola"/></svg>
+      <span class="txt">Seu pedido</span>
+      <span class="contador" id="contador">0</span>
+    </button>
+  </div>
+</header>
+
+<main id="inicio">
+  <section class="vitrine" id="vitrine">
+    <div class="wrap">
+      <div>
+        <h1>Tudo para cuidar do seu carro.</h1>
+        <p class="lead">Peças, produtos de limpeza e acessórios em Xinguara. Monte seu pedido aqui no site e envie pelo WhatsApp. A equipe confirma disponibilidade e valores com você.</p>
+        <div class="acoes">
+          <a class="btn btn-sinal" href="#produtos"><svg class="i" aria-hidden="true"><use href="#i-sacola"/></svg>Ver produtos</a>
+          <a class="btn btn-linha wa" href="#" target="_blank" rel="noopener" data-msg="Olá, CP Distribuidora! Vim pelo site e gostaria de atendimento.">
+            <svg class="i" aria-hidden="true"><use href="#i-msg"/></svg>Chamar no WhatsApp</a>
+        </div>
+        <div class="nota-google">
+          <span class="estrelas" aria-hidden="true">
+            <svg><use href="#i-estrela"/></svg><svg><use href="#i-estrela"/></svg><svg><use href="#i-estrela"/></svg><svg><use href="#i-estrela"/></svg><svg><use href="#i-estrela"/></svg>
+          </span>
+          <span><b>5,0</b> no Google, com 6 avaliações</span>
+        </div>
+      </div>
+      <figure class="fachada">
+        <div class="moldura"><img src="img/fachada.jpg" width="744" height="868" alt="Fachada da CP Distribuidora Automotiva, com a vitrine das marcas Autolimpe, Soft99 e Kers" fetchpriority="high"></div>
+        <figcaption>Nossa loja no bairro Marajoara</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="produtos" class="secao" aria-labelledby="t-produtos">
+    <div class="wrap">
+      <div class="cabeca">
+        <div>
+          <h2 class="titulo" id="t-produtos">Produtos</h2>
+          <p class="sub">Escolha o que precisa e adicione ao pedido. No fim, é só enviar a lista pelo WhatsApp.</p>
+        </div>
+      </div>
+
+      <div class="ferramentas">
+        <div class="busca">
+          <label for="busca" class="vh">Buscar produto</label>
+          <svg class="i" aria-hidden="true"><use href="#i-busca"/></svg>
+          <input id="busca" name="busca" type="search" placeholder="Buscar: shampoo, filtro, H4…" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="ordem">
+          <label for="ordem">Ordenar</label>
+          <div class="sel">
+            <select id="ordem" name="ordem">
+              <option value="destaque">Destaques</option>
+              <option value="az">Nome, de A a Z</option>
+              <option value="za">Nome, de Z a A</option>
+            </select>
+            <svg class="i" aria-hidden="true"><use href="#i-baixo"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="chips" id="chips" role="group" aria-label="Categorias"></div>
+
+      <p class="aviso"><svg class="i" aria-hidden="true"><use href="#i-info"/></svg><span id="avisoTxt">Catálogo de demonstração. Valores e estoque são confirmados pela equipe no WhatsApp.</span></p>
+
+      <p class="vh" id="status" aria-live="polite"></p>
+      <div class="grade" id="grade"></div>
+    </div>
+  </section>
+
+  <section id="marcas" class="secao" aria-labelledby="t-marcas">
+    <div class="wrap">
+      <div class="cabeca">
+        <div>
+          <h2 class="titulo" id="t-marcas">Marcas na loja</h2>
+          <p class="sub">Procurando uma marca específica? Toque nela e pergunte direto para a equipe.</p>
+        </div>
+      </div>
+      <div class="marcas-lista">
+        <a class="wa" href="#" target="_blank" rel="noopener" translate="no" data-msg="Olá! Quais produtos da Autolimpe vocês têm na loja?"><strong>Autolimpe</strong><span>Perguntar no WhatsApp<svg class="i" aria-hidden="true"><use href="#i-seta"/></svg></span></a>
+        <a class="wa" href="#" target="_blank" rel="noopener" translate="no" data-msg="Olá! Quais produtos da Soft99 vocês têm na loja?"><strong>Soft99</strong><span>Perguntar no WhatsApp<svg class="i" aria-hidden="true"><use href="#i-seta"/></svg></span></a>
+        <a class="wa" href="#" target="_blank" rel="noopener" translate="no" data-msg="Olá! Quais produtos da Kers vocês têm na loja?"><strong>Kers</strong><span>Perguntar no WhatsApp<svg class="i" aria-hidden="true"><use href="#i-seta"/></svg></span></a>
+        <a class="wa" href="#" target="_blank" rel="noopener" translate="no" data-msg="Olá! Quais produtos do Grupo Teixeira Pinto vocês têm na loja?"><strong>Teixeira Pinto</strong><span>Perguntar no WhatsApp<svg class="i" aria-hidden="true"><use href="#i-seta"/></svg></span></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="como" class="secao" aria-labelledby="t-como">
+    <div class="wrap">
+      <div class="cabeca">
+        <h2 class="titulo" id="t-como">Como comprar</h2>
+      </div>
+      <ol class="passos">
+        <li><h3>Monte seu pedido</h3><p>Adicione os produtos do catálogo e ajuste as quantidades.</p></li>
+        <li><h3>Envie pelo WhatsApp</h3><p>O site escreve a mensagem com a lista. Você confere e toca em enviar.</p></li>
+        <li><h3>Confirme e retire</h3><p>A equipe confirma estoque e valores e combina a retirada com você.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="secao" aria-labelledby="t-insta">
+    <div class="wrap">
+      <div class="cabeca">
+        <div>
+          <h2 class="titulo" id="t-insta">No Instagram</h2>
+          <p class="sub">Dicas de uso, novidades e o dia a dia da loja em <span translate="no">@cpdistribuidora_oficial</span>.</p>
+        </div>
+        <a class="btn btn-linha" href="https://www.instagram.com/cpdistribuidora_oficial/" target="_blank" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-insta"/></svg>Seguir no Instagram</a>
+      </div>
+      <div class="insta">
+        <a href="https://www.instagram.com/cpdistribuidora_oficial/" target="_blank" rel="noopener"><img src="img/ig1.jpg" width="282" height="266" loading="lazy" alt="Galão de Inter-Max 5 litros"></a>
+        <a href="https://www.instagram.com/cpdistribuidora_oficial/" target="_blank" rel="noopener"><img src="img/ig3.jpg" width="282" height="289" loading="lazy" alt="Carro coberto de espuma durante a lavagem"></a>
+        <a href="https://www.instagram.com/cpdistribuidora_oficial/" target="_blank" rel="noopener"><img src="img/ig2.jpg" width="282" height="289" loading="lazy" alt="Preparando o pulverizador para a lavagem"></a>
+        <a href="https://www.instagram.com/cpdistribuidora_oficial/" target="_blank" rel="noopener"><img src="img/ig4.jpg" width="282" height="289" loading="lazy" alt="Roda e pneu limpos"></a>
+        <a href="https://www.instagram.com/cpdistribuidora_oficial/" target="_blank" rel="noopener"><img src="img/ig5.jpg" width="245" height="254" loading="lazy" alt="Aplicação de produto no para-lama"></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="loja" class="secao" aria-labelledby="t-loja">
+    <div class="wrap">
+      <div>
+        <h2 class="titulo" id="t-loja">Venha até a loja</h2>
+        <p class="endereco">Rua Pioneiro, 791</p>
+        <p class="sub">Bairro Marajoara, Xinguara – PA, CEP 68555-545</p>
+        <div class="acoes">
+          <a class="btn btn-sinal" href="https://www.google.com/maps/search/?api=1&amp;query=CP%20Distribuidora%20automotiva%2C%20Rua%20Pioneiro%2C%20791%2C%20Xinguara%20-%20PA" target="_blank" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-pino"/></svg>Abrir no Google Maps</a>
+          <a class="btn btn-linha wa" href="#" target="_blank" rel="noopener" data-msg="Olá, CP Distribuidora! Vim pelo site e gostaria de atendimento."><svg class="i" aria-hidden="true"><use href="#i-msg"/></svg>Chamar no WhatsApp</a>
+        </div>
+      </div>
+      <div class="dados">
+        <div class="dado">
+          <svg class="i" aria-hidden="true"><use href="#i-relogio"/></svg>
+          <div><h3>Horário</h3><p>08h às 11h e 13h às 18h</p></div>
+        </div>
+        <div class="dado">
+          <svg class="i" aria-hidden="true"><use href="#i-msg"/></svg>
+          <div><h3>WhatsApp</h3><p id="numero">(94) 98410-2520</p>
+            <button class="copiar" type="button" id="copiarNumero"><svg class="i" aria-hidden="true"><use href="#i-copiar"/></svg>Copiar número</button></div>
+        </div>
+        <div class="dado">
+          <svg class="i" aria-hidden="true"><use href="#i-insta"/></svg>
+          <div><h3>Instagram</h3><p><a href="https://www.instagram.com/cpdistribuidora_oficial/" target="_blank" rel="noopener" translate="no">@cpdistribuidora_oficial</a></p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="rodape">
+  <div class="wrap">
+    <img src="img/logo-dark.png" width="300" height="176" alt="CP Distribuidora Automotiva" loading="lazy">
+    <nav aria-label="Rodapé">
+      <a href="#produtos">Produtos</a>
+      <a href="#marcas">Marcas</a>
+      <a href="#como">Como comprar</a>
+      <a href="https://www.instagram.com/cpdistribuidora_oficial/" target="_blank" rel="noopener">Instagram</a>
+    </nav>
+    <span>© 2026 CP Distribuidora Automotiva. Xinguara – PA.</span>
+  </div>
+</footer>
+
+<div class="barra-cel" id="barraCel">
+  <button class="btn btn-sinal" type="button" id="abrirPedidoCel"><svg class="i" aria-hidden="true"><use href="#i-sacola"/></svg><span id="barraTxt">Ver pedido</span></button>
+</div>
+
+<dialog class="gaveta" id="pedido" aria-labelledby="t-pedido">
+  <div class="g-topo">
+    <h2 id="t-pedido">Seu pedido</h2>
+    <button class="fechar" type="button" data-fechar aria-label="Fechar pedido"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button>
+  </div>
+  <div class="g-corpo" id="pedidoCorpo"></div>
+  <div class="g-pe" id="pedidoPe"></div>
+</dialog>
+
+<dialog class="ficha" id="ficha" aria-labelledby="t-ficha"></dialog>
+
+<div class="avisos" id="avisos" aria-live="polite"></div>
+
+<script>
+(() => {
+  const WHATS = "5594984102520";
+  const waLink = (msg) => "https://wa.me/" + WHATS + "?text=" + encodeURIComponent(msg);
+
+  let CATS = [
+    { id: "todos", nome: "Todos" },
+    { id: "lavagem", nome: "Lavagem e estética" },
+    { id: "pneus", nome: "Pneus e rodas" },
+    { id: "pecas", nome: "Peças" },
+    { id: "oleos", nome: "Óleos e fluidos" },
+    { id: "acessorios", nome: "Acessórios" }
+  ];
+
+  // Catálogo de demonstração. Só aparece se o endereço /api/produtos não responder
+  // (por exemplo, abrindo o arquivo direto no computador). Quando o sistema da loja
+  // estiver ligado, a lista vem de lá. Campos: "preco" vazio mostra "Sob consulta";
+  // "estoque" 0 mostra "Esgotado"; sem "estoque", não mostra nada.
+  let PRODUTOS = [
+    { id: "intermax-5l", nome: "Inter-Max 5 L", cat: "lavagem", placa: "5 L", espec: "Galão de 5 litros", foto: "img/ig1.jpg", preco: "",
+      desc: "Produto para lavagem automotiva em galão de 5 litros. Siga a diluição indicada no rótulo." },
+    { id: "shampoo-1l", nome: "Shampoo automotivo neutro", cat: "lavagem", placa: "1 L", espec: "Frasco de 1 litro", preco: "",
+      desc: "Shampoo para a lavagem do dia a dia, com espuma que ajuda a soltar a sujeira da pintura." },
+    { id: "cera-pasta", nome: "Cera automotiva em pasta", cat: "lavagem", placa: "200 g", espec: "Pote de 200 g", preco: "",
+      desc: "Cera para dar brilho e proteger a pintura depois da lavagem. Aplique com o carro seco e na sombra." },
+    { id: "limpa-vidros", nome: "Limpa vidros", cat: "lavagem", placa: "500 ml", espec: "Frasco com gatilho de 500 ml", preco: "",
+      desc: "Limpa vidros e retrovisores por dentro e por fora. Use com flanela de microfibra." },
+    { id: "pretinho", nome: "Pretinho para pneus", cat: "pneus", placa: "1 L", espec: "Frasco de 1 litro", preco: "",
+      desc: "Deixa o pneu com aparência de novo, com acabamento escuro. Aplique com esponja no pneu limpo e seco." },
+    { id: "limpa-rodas", nome: "Limpa rodas", cat: "pneus", placa: "500 ml", espec: "Frasco com gatilho de 500 ml", preco: "",
+      desc: "Ajuda a remover a poeira de freio e a sujeira grudada nas rodas. Enxágue bem depois de aplicar." },
+    { id: "oleo-5w30", nome: "Óleo de motor 5W-30", cat: "oleos", placa: "5W-30", espec: "Frasco de 1 litro", preco: "",
+      desc: "Óleo lubrificante para motor. Confirme no manual do seu carro a especificação indicada antes da troca." },
+    { id: "aditivo-radiador", nome: "Aditivo para radiador", cat: "oleos", placa: "1 L", espec: "Frasco de 1 litro", preco: "",
+      desc: "Aditivo para o sistema de arrefecimento. Use na proporção recomendada pela montadora." },
+    { id: "fluido-freio", nome: "Fluido de freio DOT 4", cat: "oleos", placa: "DOT 4", espec: "Frasco de 500 ml", preco: "",
+      desc: "Fluido para o sistema de freio. Verifique no manual se o seu carro usa DOT 4." },
+    { id: "filtro-oleo", nome: "Filtro de óleo", cat: "pecas", placa: "Filtro", espec: "Consulte a aplicação para o seu carro", preco: "",
+      desc: "Filtro de óleo para troca junto com o óleo do motor. Informe modelo e ano do carro para a equipe indicar o certo." },
+    { id: "pastilha-freio", nome: "Pastilha de freio dianteira", cat: "pecas", placa: "Freio", espec: "Jogo para as duas rodas", preco: "",
+      desc: "Jogo de pastilhas para o freio dianteiro. Informe modelo e ano do carro para conferir a aplicação." },
+    { id: "lampada-h4", nome: "Lâmpada H4 12 V", cat: "pecas", placa: "H4", espec: "Farol, 12 volts", preco: "",
+      desc: "Lâmpada H4 para farol, com luz alta e baixa no mesmo bulbo. Confira no manual o tipo usado no seu carro." },
+    { id: "palheta-20", nome: "Palheta do limpador 20″", cat: "pecas", placa: "20″", espec: "Tamanho de 20 polegadas", preco: "",
+      desc: "Palheta para o limpador do para-brisa. Meça a palheta atual ou informe o modelo do carro." },
+    { id: "flanela", nome: "Flanela de microfibra 40 × 40 cm", cat: "acessorios", placa: "40×40", espec: "40 × 40 cm", preco: "",
+      desc: "Flanela macia para secar e tirar o excesso de produtos sem riscar a pintura." },
+    { id: "tapete", nome: "Jogo de tapetes de borracha", cat: "acessorios", placa: "4 pç", espec: "4 peças", preco: "",
+      desc: "Tapetes de borracha para proteger o assoalho. Informe o modelo do carro para conferir o encaixe." },
+    { id: "pulverizador", nome: "Pulverizador pressurizado", cat: "acessorios", placa: "1,5 L", espec: "Capacidade de 1,5 litro", preco: "",
+      desc: "Pulverizador com bomba para aplicar produtos de lavagem com mais rendimento." }
+  ];
+  let porId = Object.fromEntries(PRODUTOS.map(p => [p.id, p]));
+  let nomeCat = Object.fromEntries(CATS.map(c => [c.id, c.nome]));
+  const esgotado = (p) => p.estoque === 0;
+
+  // Estado
+  const guardar = {
+    ler(k, padrao) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : padrao; } catch { return padrao; } },
+    gravar(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+  };
+  let pedido = guardar.ler("cp-pedido", {});
+  for (const id of Object.keys(pedido)) if (!porId[id] || !(pedido[id] > 0)) delete pedido[id];
+  let cliente = guardar.ler("cp-cliente", { nome: "", obs: "" });
+  let filtro = "todos", termo = "", ordem = "destaque";
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const icone = (n) => `<svg class="i" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+  const normal = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  const totalItens = () => Object.values(pedido).reduce((a, b) => a + b, 0);
+  const fmt = new Intl.NumberFormat("pt-BR");
+
+  const midia = (p, cls = "") => p.foto
+    ? `<img src="${esc(p.foto)}" alt="${esc(p.nome)}" width="282" height="282" loading="lazy">`
+    : `<div class="placa ${cls}" aria-hidden="true"><span>${esc(p.placa)}</span></div>`;
+
+  const precoTxt = (p) => p.preco ? `<b>${esc(p.preco)}</b>` : "Preço <b>sob consulta</b>";
+
+  const estoqueTxt = (p) => p.estoque == null ? "" : esgotado(p)
+    ? `<span class="estoque zero">Esgotado</span>` : `<span class="estoque">Em estoque</span>`;
+
+  const controle = (p, forte = false) => {
+    const q = pedido[p.id] || 0;
+    if (esgotado(p) && !q) return `<a class="add avisar" href="${waLink(`Olá! Me avisem quando chegar ${p.nome} (${p.espec}).`)}" target="_blank" rel="noopener">${icone("msg")}Avisar quando chegar</a>`;
+    if (!q) return `<button class="add${forte ? " forte" : ""}" type="button" data-add="${p.id}">${icone("mais")}${forte ? "Adicionar ao pedido" : "Adicionar"}</button>`;
+    return `<div class="qtd" role="group" aria-label="Quantidade de ${esc(p.nome)}">
+      <button type="button" data-menos="${p.id}" aria-label="Diminuir quantidade">${icone("menos")}</button>
+      <output>${q} no pedido</output>
+      <button type="button" data-mais="${p.id}" aria-label="Aumentar quantidade">${icone("mais")}</button></div>`;
+  };
+
+  // Categorias
+  function desenharChips() {
+    const contagem = { todos: PRODUTOS.length };
+    PRODUTOS.forEach(p => contagem[p.cat] = (contagem[p.cat] || 0) + 1);
+    $("#chips").innerHTML = CATS.map(c =>
+      `<button class="chip" type="button" data-cat="${c.id}" aria-pressed="${c.id === filtro}">${esc(c.nome)} <small>${fmt.format(contagem[c.id] || 0)}</small></button>`
+    ).join("");
+  }
+
+  // Grade de produtos
+  function desenharGrade() {
+    const t = normal(termo.trim());
+    let lista = PRODUTOS.filter(p => (filtro === "todos" || p.cat === filtro) &&
+      (!t || normal(p.nome + " " + p.espec + " " + p.placa + " " + (nomeCat[p.cat] || p.cat)).includes(t)));
+    if (ordem !== "destaque") {
+      const col = new Intl.Collator("pt-BR");
+      lista = [...lista].sort((a, b) => col.compare(a.nome, b.nome) * (ordem === "az" ? 1 : -1));
+    }
+    $("#status").textContent = lista.length ? `${lista.length} ${lista.length === 1 ? "produto" : "produtos"}` : "Nenhum produto encontrado";
+    if (!lista.length) {
+      const msg = termo ? `Vocês têm ${termo}?` : "Gostaria de ajuda para encontrar um produto.";
+      $("#grade").innerHTML = `<div class="vazio"><strong>Nenhum produto encontrado${termo ? ` para “${esc(termo)}”` : ""}.</strong>
+        Tente outro termo ou pergunte para a equipe.
+        <div class="acoes"><button class="btn btn-linha" type="button" id="limparBusca">${icone("x")}Limpar busca</button>
+        <a class="btn btn-sinal" href="${waLink("Olá! " + msg)}" target="_blank" rel="noopener">${icone("msg")}Perguntar no WhatsApp</a></div></div>`;
+      return;
+    }
+    $("#grade").innerHTML = lista.map(p => `
+      <article class="produto${esgotado(p) ? " esgotado" : ""}" data-id="${p.id}">
+        <button class="midia" type="button" data-ver="${p.id}" aria-label="Ver detalhes de ${esc(p.nome)}" tabindex="-1">${midia(p)}</button>
+        <div class="info">
+          <span class="cat">${esc(nomeCat[p.cat] || p.cat)}</span>
+          <button class="nome" type="button" data-ver="${p.id}">${esc(p.nome)}</button>
+          <span class="espec">${esc(p.espec)}</span>
+          ${estoqueTxt(p)}
+          <span class="preco">${precoTxt(p)}</span>
+          <div class="ctl">${controle(p)}</div>
+        </div>
+      </article>`).join("");
+  }
+
+  function atualizarControles(id) {
+    document.querySelectorAll(`.produto[data-id="${id}"] .ctl`).forEach(el => el.innerHTML = controle(porId[id]));
+    document.querySelectorAll(`.ficha-ctl[data-id="${id}"]`).forEach(el => el.innerHTML = controle(porId[id], true));
+  }
+
+  // Contador e barra do celular
+  function atualizarContador(pular) {
+    const n = totalItens();
+    const c = $("#contador");
+    c.textContent = fmt.format(n);
+    c.classList.toggle("zero", n === 0);
+    if (pular) { c.classList.remove("pulo"); void c.offsetWidth; c.classList.add("pulo"); }
+    $("#abrirPedido").setAttribute("aria-label", `Abrir seu pedido, ${n} ${n === 1 ? "item" : "itens"}`);
+    $("#barraCel").classList.toggle("ativa", n > 0);
+    document.body.classList.toggle("com-barra", n > 0);
+    $("#barraTxt").textContent = `Ver pedido (${fmt.format(n)} ${n === 1 ? "item" : "itens"})`;
+  }
+
+  function mudar(id, delta) {
+    const atual = pedido[id] || 0;
+    if (delta > 0 && esgotado(porId[id])) { avisar(`${porId[id].nome} está esgotado no momento.`); return; }
+    const novo = Math.max(0, Math.min(99, atual + delta));
+    if (novo === atual) return;
+    if (novo === 0) { remover(id); return; }
+    pedido[id] = novo;
+    salvar(delta > 0);
+    atualizarControles(id);
+    if (atual === 0) avisar(`${porId[id].nome} entrou no pedido.`, "Ver pedido", abrirPedido);
+  }
+
+  function remover(id) {
+    const antes = pedido[id];
+    delete pedido[id];
+    salvar(false);
+    atualizarControles(id);
+    avisar(`${porId[id].nome} saiu do pedido.`, "Desfazer", () => { pedido[id] = antes; salvar(true); atualizarControles(id); });
+  }
+
+  function salvar(pular) {
+    guardar.gravar("cp-pedido", pedido);
+    atualizarContador(pular);
+    if ($("#pedido").open) desenharPedido();
+  }
+
+  // Avisos
+  function avisar(texto, acao, fn) {
+    const box = $("#avisos");
+    box.innerHTML = "";
+    const el = document.createElement("div");
+    el.className = "toast";
+    el.innerHTML = `<span>${esc(texto)}</span>`;
+    if (acao) {
+      const b = document.createElement("button");
+      b.type = "button"; b.textContent = acao;
+      b.addEventListener("click", () => { el.remove(); fn(); });
+      el.appendChild(b);
+    }
+    box.appendChild(el);
+    clearTimeout(avisar.t);
+    avisar.t = setTimeout(() => el.remove(), 5000);
+  }
+
+  // Mensagem do pedido
+  function mensagemPedido() {
+    const linhas = Object.entries(pedido).map(([id, q]) => `• ${q}x ${porId[id].nome} (${porId[id].espec})`);
+    let m = "Olá, CP Distribuidora! Quero fazer um pedido pelo site:\n\n" + linhas.join("\n");
+    if (cliente.nome.trim()) m += `\n\nNome: ${cliente.nome.trim()}`;
+    if (cliente.obs.trim()) m += `\nObservações: ${cliente.obs.trim()}`;
+    m += "\n\nPode confirmar a disponibilidade e os valores?";
+    return m;
+  }
+
+  // Gaveta do pedido
+  function desenharPedido() {
+    const corpo = $("#pedidoCorpo"), pe = $("#pedidoPe");
+    const ids = Object.keys(pedido);
+    if (!ids.length) {
+      corpo.innerHTML = `<div class="pedido-vazio"><strong>Seu pedido está vazio.</strong>
+        Adicione produtos do catálogo para montar a lista.<br>
+        <button class="btn btn-sinal" type="button" data-fechar data-ir="produtos">Ver produtos</button></div>`;
+      pe.innerHTML = "";
+      return;
+    }
+    corpo.innerHTML = `<ul class="itens">${ids.map(id => {
+      const p = porId[id];
+      return `<li class="item">
+        <div class="mini">${midia(p)}</div>
+        <div><b>${esc(p.nome)}</b><small>${esc(p.espec)}</small>
+          <div class="qtd" role="group" aria-label="Quantidade de ${esc(p.nome)}">
+            <button type="button" data-menos="${id}" aria-label="Diminuir quantidade">${icone("menos")}</button>
+            <output>${pedido[id]}</output>
+            <button type="button" data-mais="${id}" aria-label="Aumentar quantidade">${icone("mais")}</button>
+          </div></div>
+        <button class="remover" type="button" data-remover="${id}" aria-label="Tirar ${esc(p.nome)} do pedido">${icone("lixo")}</button>
+      </li>`;
+    }).join("")}</ul>
+    <div class="campo"><label for="clienteNome">Seu nome (opcional)</label>
+      <input id="clienteNome" name="nome" type="text" autocomplete="name" placeholder="Ex.: Maria Souza…" value="${esc(cliente.nome)}"></div>
+    <div class="campo"><label for="clienteObs">Observações (opcional)</label>
+      <textarea id="clienteObs" name="observacoes" rows="3" autocomplete="off" placeholder="Ex.: modelo e ano do carro, horário de retirada…">${esc(cliente.obs)}</textarea></div>`;
+    const n = totalItens();
+    pe.innerHTML = `<div class="resumo"><span>${ids.length} ${ids.length === 1 ? "produto" : "produtos"}</span><b>${fmt.format(n)} ${n === 1 ? "unidade" : "unidades"}</b></div>
+      <a class="btn btn-sinal" id="enviar" href="${waLink(mensagemPedido())}" target="_blank" rel="noopener">${icone("msg")}Enviar pedido pelo WhatsApp</a>
+      <button class="btn btn-linha" type="button" id="copiarPedido">${icone("copiar")}Copiar pedido</button>`;
+  }
+
+  function abrirPedido() {
+    if ($("#ficha").open) $("#ficha").close();
+    desenharPedido();
+    if (!$("#pedido").open) $("#pedido").showModal();
+  }
+
+  // Ficha do produto
+  function abrirFicha(id) {
+    const p = porId[id];
+    const f = $("#ficha");
+    f.innerHTML = `<div class="ficha-grid">
+      <div class="midia">${midia(p)}</div>
+      <div class="ficha-txt">
+        <button class="fechar" type="button" data-fechar aria-label="Fechar">${icone("x")}</button>
+        <span class="cat">${esc(nomeCat[p.cat] || p.cat)}</span>
+        <h2 id="t-ficha">${esc(p.nome)}</h2>
+        <p>${esc(p.desc)}</p>
+        <dl><dt>Embalagem</dt><dd>${esc(p.espec)}</dd><dt>Preço</dt><dd>${p.preco ? esc(p.preco) : "Sob consulta"}</dd>${p.estoque == null ? "" : `<dt>Estoque</dt><dd>${esgotado(p) ? "Esgotado" : "Disponível"}</dd>`}</dl>
+        <div class="acoes">
+          <div class="ficha-ctl" data-id="${p.id}">${controle(p, true)}</div>
+          <a class="btn btn-linha" href="${waLink(`Olá! Vocês têm ${p.nome} (${p.espec})? Qual o valor?`)}" target="_blank" rel="noopener">${icone("msg")}Perguntar sobre este produto</a>
+        </div>
+      </div></div>`;
+    f.showModal();
+  }
+
+  async function copiar(texto, ok) {
+    try { await navigator.clipboard.writeText(texto); avisar(ok); }
+    catch { avisar("Não deu para copiar automaticamente. Selecione o texto e copie manualmente."); }
+  }
+
+  // Eventos
+  document.addEventListener("click", (e) => {
+    const t = e.target.closest("button, a");
+    if (!t) return;
+    const d = t.dataset;
+    if (d.cat) { filtro = d.cat; desenharChips(); desenharGrade(); return; }
+    if (d.add) { mudar(d.add, 1); return; }
+    if (d.mais) { mudar(d.mais, 1); return; }
+    if (d.menos) { mudar(d.menos, -1); return; }
+    if (d.remover) { remover(d.remover); return; }
+    if (d.ver) { abrirFicha(d.ver); return; }
+    if ("fechar" in d) {
+      t.closest("dialog")?.close();
+      if (d.ir) document.getElementById(d.ir)?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      return;
+    }
+    if (t.id === "abrirPedido" || t.id === "abrirPedidoCel") { abrirPedido(); return; }
+    if (t.id === "limparBusca") { termo = ""; filtro = "todos"; $("#busca").value = ""; desenharChips(); desenharGrade(); $("#busca").focus(); return; }
+    if (t.id === "copiarPedido") { copiar(mensagemPedido(), "Pedido copiado. Cole na conversa do WhatsApp."); return; }
+    if (t.id === "copiarNumero") { copiar("(94) 98410-2520", "Número copiado."); return; }
+    if (t.id === "enviar") { avisar("Abrimos o WhatsApp com a lista. Confira e toque em enviar."); return; }
+  });
+
+  // Fechar diálogo clicando fora
+  document.querySelectorAll("dialog").forEach(dl => dl.addEventListener("click", (e) => { if (e.target === dl) dl.close(); }));
+
+  document.addEventListener("input", (e) => {
+    if (e.target.id === "busca") { termo = e.target.value; desenharGrade(); }
+    if (e.target.id === "clienteNome" || e.target.id === "clienteObs") {
+      cliente = { nome: $("#clienteNome")?.value || "", obs: $("#clienteObs")?.value || "" };
+      guardar.gravar("cp-cliente", cliente);
+      const env = $("#enviar"); if (env) env.href = waLink(mensagemPedido());
+    }
+  });
+  $("#ordem").addEventListener("change", (e) => { ordem = e.target.value; desenharGrade(); });
+
+  document.querySelectorAll("a.wa").forEach(a => a.href = waLink(a.dataset.msg));
+
+  // Destaca no menu a seção visível
+  const links = [...document.querySelectorAll(".nav a")];
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver((ents) => {
+      ents.forEach(en => {
+        if (!en.isIntersecting) return;
+        links.forEach(a => a.toggleAttribute("aria-current", a.getAttribute("href") === "#" + en.target.id));
+        links.forEach(a => { if (a.hasAttribute("aria-current")) a.setAttribute("aria-current", "true"); });
+      });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    ["vitrine", "produtos", "marcas", "como", "loja"].forEach(id => { const el = document.getElementById(id); if (el) io.observe(el); });
+  }
+
+  desenharChips();
+  desenharGrade();
+  atualizarContador(false);
+
+  // Busca a lista atualizada do sistema da loja (Noturno ERP) pelo endereço /api/produtos.
+  // Se não der certo, o catálogo de demonstração acima continua na tela.
+  async function carregarDoSistema() {
+    try {
+      const r = await fetch("/api/produtos", { headers: { Accept: "application/json" } });
+      if (!r.ok) return;
+      const dados = await r.json();
+      if (!Array.isArray(dados.produtos) || !dados.produtos.length) return;
+      PRODUTOS = dados.produtos;
+      porId = Object.fromEntries(PRODUTOS.map(p => [p.id, p]));
+      const novas = [...new Set(PRODUTOS.map(p => p.cat))].filter(c => !nomeCat[c]);
+      CATS = [...CATS.filter(c => c.id === "todos" || PRODUTOS.some(p => p.cat === c.id)), ...novas.map(c => ({ id: c, nome: c }))];
+      nomeCat = Object.fromEntries(CATS.map(c => [c.id, c.nome]));
+      for (const id of Object.keys(pedido)) if (!porId[id]) delete pedido[id];
+      if (!nomeCat[filtro]) filtro = "todos";
+      const quando = dados.atualizadoEm ? new Date(dados.atualizadoEm) : null;
+      $("#avisoTxt").textContent = "Estoque ligado ao sistema da loja" +
+        (quando && !isNaN(quando) ? `, atualizado às ${quando.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}` : "") +
+        ". A equipe confirma tudo no WhatsApp.";
+      salvar(false); desenharChips(); desenharGrade();
+    } catch {}
+  }
+  carregarDoSistema();
+})();
+</script>
+
+</body></html>
