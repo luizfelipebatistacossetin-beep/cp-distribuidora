@@ -1,64 +1,63 @@
-// Função da Vercel: busca os produtos no sistema da loja (Noturno ERP)
-// e entrega para o site no endereço /api/produtos.
+// Função da Vercel: busca os produtos no Supabase e entrega para o site
+// no endereço /api/produtos.
 //
-// A senha/chave da API NUNCA fica aqui no código. Ela fica nas configurações
-// do projeto na Vercel (Settings > Environment Variables):
-//   NOTURNO_API_URL   endereço da API que a Noturno passar
-//   NOTURNO_TOKEN     chave de acesso que a Noturno passar
+// Como funciona:
+//   Noturno ERP (servidor da loja) -> programa "ponte" -> Supabase -> este arquivo -> site
 //
-// Enquanto essas duas não existirem, a função responde "não configurado"
-// e o site continua mostrando o catálogo de demonstração.
+// A ponte (que roda no servidor da loja) é quem envia produtos, preços,
+// estoque e fotos para a tabela "produtos" do Supabase. Aqui o site só LÊ.
 //
-// IMPORTANTE: a parte "converter" abaixo é um palpite. Quando chegar a
-// documentação da API, é só ajustar os nomes dos campos nela.
+// A chave abaixo é a "publishable key": ela é pública e só permite ler
+// os produtos ativos (a proteção está no próprio Supabase). Se um dia quiser
+// trocar, crie na Vercel (Settings > Environment Variables):
+//   SUPABASE_URL                endereço do projeto
+//   SUPABASE_PUBLISHABLE_KEY    chave pública (sb_publishable_...)
+//
+// Enquanto a tabela estiver vazia, o site continua mostrando o catálogo
+// de demonstração.
 
-const MINUTOS_CACHE = 15; // de quanto em quanto tempo o site pergunta de novo ao sistema
+const SUPABASE_URL = process.env.SUPABASE_URL || "https://twuanfncbxidvpixkfez.supabase.co";
+const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY || "sb_publishable_dMLTBDxboDFmhlKVggSGAg_dmxv8xfj";
+
+const MINUTOS_CACHE = 5; // de quanto em quanto tempo o site pergunta de novo ao Supabase
 
 module.exports = async (req, res) => {
-  const url = process.env.NOTURNO_API_URL;
-  const token = process.env.NOTURNO_TOKEN;
-
-  if (!url || !token) {
-    res.status(503).json({ erro: "Integração com o sistema da loja ainda não configurada." });
-    return;
-  }
-
   try {
-    const resposta = await fetch(url, {
-      headers: { Authorization: `Bearer ${token}`, Accept: "application/json" }
+    const endereco = `${SUPABASE_URL}/rest/v1/produtos?select=*&ativo=eq.true&order=nome.asc`;
+    const resposta = await fetch(endereco, {
+      headers: { apikey: SUPABASE_KEY, Accept: "application/json" }
     });
-    if (!resposta.ok) throw new Error(`Sistema respondeu ${resposta.status}`);
+    if (!resposta.ok) throw new Error(`Supabase respondeu ${resposta.status}: ${await resposta.text()}`);
 
-    const bruto = await resposta.json();
-    const lista = Array.isArray(bruto) ? bruto : (bruto.produtos || bruto.data || bruto.items || []);
-    const produtos = lista.map(converter).filter(p => p.id && p.nome && p.ativo !== false);
+    const lista = await resposta.json();
+    const produtos = lista.map(converter).filter(p => p.id && p.nome);
 
-    // A Vercel guarda a resposta por alguns minutos: o sistema da loja é
-    // consultado no máximo a cada MINUTOS_CACHE, não a cada visita.
+    // Data da última atualização feita pela ponte
+    const ultima = lista.reduce((max, p) => (p.atualizado_em && p.atualizado_em > max ? p.atualizado_em : max), "");
+
+    // A Vercel guarda a resposta por alguns minutos para o site ficar rápido.
     res.setHeader("Cache-Control", `s-maxage=${MINUTOS_CACHE * 60}, stale-while-revalidate=3600`);
-    res.status(200).json({ atualizadoEm: new Date().toISOString(), produtos });
+    res.status(200).json({ atualizadoEm: ultima || new Date().toISOString(), produtos });
   } catch (e) {
-    console.error("Falha ao buscar produtos no Noturno:", e);
-    res.status(502).json({ erro: "Não foi possível falar com o sistema da loja agora." });
+    console.error("Falha ao buscar produtos no Supabase:", e);
+    res.status(502).json({ erro: "Não foi possível carregar os produtos agora." });
   }
 };
 
-// Transforma um produto do formato do Noturno no formato que o site usa.
-// AJUSTAR quando a documentação chegar (os nomes à direita são chutes).
+// Transforma uma linha da tabela "produtos" no formato que o site usa.
 function converter(item) {
-  const preco = Number(item.preco_venda ?? item.preco ?? item.valor ?? 0);
-  const estoque = item.estoque ?? item.saldo ?? item.quantidade;
+  const preco = Number(item.preco ?? 0);
+  const estoque = item.estoque;
   return {
-    id: String(item.codigo ?? item.id ?? ""),
-    nome: item.descricao ?? item.nome ?? "",
-    cat: categoria(item.grupo ?? item.categoria ?? ""),
-    espec: item.unidade ? `Unidade: ${item.unidade}` : (item.embalagem ?? ""),
-    placa: item.unidade ?? "",
-    foto: item.foto_url ?? item.imagem ?? "",
+    id: String(item.id_interno ?? ""),
+    nome: item.nome ?? "",
+    cat: categoria(item.categoria ?? ""),
+    espec: [item.marca, item.codigo ? `Cód. ${item.codigo}` : ""].filter(Boolean).join(" · "),
+    placa: item.marca ?? "",
+    foto: item.foto_url ?? "",
     preco: preco > 0 ? preco.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) : "",
     estoque: estoque == null ? null : Math.max(0, Number(estoque) || 0),
-    desc: item.observacao ?? item.descricao_longa ?? "",
-    ativo: item.ativo
+    desc: item.descricao ?? ""
   };
 }
 
