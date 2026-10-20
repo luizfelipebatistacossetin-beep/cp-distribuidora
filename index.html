@@ -653,8 +653,12 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
     ).join("");
   }
 
-  // Grade de produtos
+  // Grade de produtos (mostra de 60 em 60 para não pesar no celular)
+  const POR_VEZ = 60;
+  let mostrar = POR_VEZ, chaveGrade = "";
   function desenharGrade() {
+    const chave = filtro + "|" + termo + "|" + ordem;
+    if (chave !== chaveGrade) { chaveGrade = chave; mostrar = POR_VEZ; }
     const t = normal(termo.trim());
     let lista = PRODUTOS.filter(p => (filtro === "todos" || p.cat === filtro) &&
       (!t || normal(p.nome + " " + p.espec + " " + p.placa + " " + (nomeCat[p.cat] || p.cat)).includes(t)));
@@ -671,6 +675,8 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
         <a class="btn btn-sinal" href="${waLink("Olá! " + msg)}" target="_blank" rel="noopener">${icone("msg")}Perguntar no WhatsApp</a></div></div>`;
       return;
     }
+    const total = lista.length;
+    lista = lista.slice(0, mostrar);
     $("#grade").innerHTML = lista.map(p => `
       <article class="produto${esgotado(p) ? " esgotado" : ""}" data-id="${p.id}">
         <button class="midia" type="button" data-ver="${p.id}" aria-label="Ver detalhes de ${esc(p.nome)}" tabindex="-1">${midia(p)}</button>
@@ -682,8 +688,13 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
           <span class="preco">${precoTxt(p)}</span>
           <div class="ctl">${controle(p)}</div>
         </div>
-      </article>`).join("");
+      </article>`).join("") + (total > lista.length
+        ? `<div class="vazio" style="grid-column:1/-1"><button class="btn btn-linha" type="button" id="verMais">Ver mais produtos (${total - lista.length} restantes)</button></div>`
+        : "");
   }
+  document.addEventListener("click", e => {
+    if (e.target.closest("#verMais")) { mostrar += POR_VEZ; desenharGrade(); }
+  });
 
   function atualizarControles(id) {
     document.querySelectorAll(`.produto[data-id="${id}"] .ctl`).forEach(el => el.innerHTML = controle(porId[id]));
