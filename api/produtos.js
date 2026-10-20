@@ -23,14 +23,21 @@ const MINUTOS_CACHE = 5; // de quanto em quanto tempo o site pergunta de novo ao
 
 module.exports = async (req, res) => {
   try {
-    const endereco = `${SUPABASE_URL}/rest/v1/produtos?select=*&ativo=eq.true&order=nome.asc`;
-    const resposta = await fetch(endereco, {
-      headers: { apikey: SUPABASE_KEY, Accept: "application/json" }
-    });
-    if (!resposta.ok) throw new Error(`Supabase respondeu ${resposta.status}: ${await resposta.text()}`);
-
-    const lista = await resposta.json();
-    const produtos = lista.map(converter).filter(p => p.id && p.nome);
+    // O Supabase entrega no máximo 1000 por vez: busca em páginas até acabar
+    const lista = [];
+    for (let inicio = 0; ; inicio += 1000) {
+      const endereco = `${SUPABASE_URL}/rest/v1/produtos?select=*&ativo=eq.true&order=nome.asc`;
+      const resposta = await fetch(endereco, {
+        headers: { apikey: SUPABASE_KEY, Accept: "application/json", Range: `${inicio}-${inicio + 999}` }
+      });
+      if (!resposta.ok) throw new Error(`Supabase respondeu ${resposta.status}: ${await resposta.text()}`);
+      const pagina = await resposta.json();
+      lista.push(...pagina);
+      if (pagina.length < 1000) break;
+    }
+    // Em estoque primeiro; depois os esgotados (cada grupo em ordem alfabética)
+    const produtos = lista.map(converter).filter(p => p.id && p.nome)
+      .sort((a, b) => (temEstoque(b) - temEstoque(a)) || a.nome.localeCompare(b.nome, "pt-BR"));
 
     // Data da última atualização feita pela ponte
     const ultima = lista.reduce((max, p) => (p.atualizado_em && p.atualizado_em > max ? p.atualizado_em : max), "");
@@ -43,6 +50,8 @@ module.exports = async (req, res) => {
     res.status(502).json({ erro: "Não foi possível carregar os produtos agora." });
   }
 };
+
+function temEstoque(p) { return p.estoque == null || p.estoque > 0 ? 1 : 0; }
 
 // Transforma uma linha da tabela "produtos" no formato que o site usa.
 function converter(item) {
