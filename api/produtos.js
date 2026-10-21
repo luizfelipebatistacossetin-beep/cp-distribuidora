@@ -57,7 +57,20 @@ module.exports = async (req, res) => {
   }
 };
 
+// Grupos/palavras/produtos escondidos direto pelo código (além da tabela "ocultos")
+const OCULTOS_FIXOS = [
+  { tipo: "grupo", valor: "AUTOMOTIVO" },
+  { tipo: "grupo", valor: "CLAY BAR" },
+  { tipo: "grupo", valor: "TERMINAL DIRECAO" },
+  { tipo: "grupo", valor: "EMBALAGEM" }
+];
+
 async function buscarOcultos() {
+  const fixos = OCULTOS_FIXOS.map(o => ({ tipo: normalizar(o.tipo), valor: normalizar(o.valor) }));
+  return [...fixos, ...(await buscarOcultosTabela())];
+}
+
+async function buscarOcultosTabela() {
   try {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/ocultos?select=tipo,valor`, {
       headers: { apikey: SUPABASE_KEY, Accept: "application/json" }
