@@ -41,7 +41,7 @@ module.exports = async (req, res) => {
 
     // Ordem de prioridade (vale dentro de cada grupo):
     //   1) em estoque  2) com foto  3) limpeza/estética antes dos outros grupos  4) nome
-    const produtos = visiveis.map(converter).filter(p => p.id && p.nome)
+    const produtos = visiveis.map(converter).filter(p => p.id && p.nome && p.cat !== "diversos")
       .sort((a, b) => (temEstoque(b) - temEstoque(a)) || (temFoto(b) - temFoto(a)) ||
         (ordemGrupo(a.cat) - ordemGrupo(b.cat)) || a.nome.localeCompare(b.nome, "pt-BR"));
 
@@ -97,7 +97,7 @@ function estaOculto(item, ocultos) {
 
 function temEstoque(p) { return p.estoque == null || p.estoque > 0 ? 1 : 0; }
 function temFoto(p) { return p.foto ? 1 : 0; }
-const ORDEM_GRUPOS = ["lavagem", "pneus", "acessorios", "oleos", "pecas"];
+const ORDEM_GRUPOS = ["lavagem", "acessorios", "oleos", "pecas"];
 function ordemGrupo(cat) { const i = ORDEM_GRUPOS.indexOf(cat); return i < 0 ? 99 : i; }
 
 // Transforma uma linha da tabela "produtos" no formato que o site usa.
@@ -107,7 +107,7 @@ function converter(item) {
   return {
     id: String(item.id_interno ?? ""),
     nome: item.nome ?? "",
-    cat: categoria(item.categoria ?? ""),
+    cat: categoria(item.categoria ?? "", item.nome ?? ""),
     espec: [item.marca, item.codigo ? `Cód. ${item.codigo}` : ""].filter(Boolean).join(" · "),
     placa: item.marca ?? "",
     foto: item.foto_url ?? "",
@@ -117,14 +117,36 @@ function converter(item) {
   };
 }
 
-// Liga os grupos do sistema às categorias que aparecem no site.
-// Grupos que não estiverem aqui aparecem com o próprio nome.
-function categoria(grupo) {
-  const g = String(grupo).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
-  if (/lav|estet|limp|cera|shamp/.test(g)) return "lavagem";
-  if (/pneu|roda/.test(g)) return "pneus";
-  if (/oleo|fluid|aditiv|lubri/.test(g)) return "oleos";
-  if (/acess/.test(g)) return "acessorios";
-  if (/peca|filtro|freio|lamp|palhet/.test(g)) return "pecas";
-  return String(grupo).trim() || "outros";
+// ===== Agrupamento do site =====
+// Junta os ~40 grupos do Noturno em poucas categorias. Produtos do grupo
+// DIVERSOS/GERAIS são separados pelo NOME. O que não se encaixa vira "diversos"
+// (itens de uso interno da loja) e fica escondido do site.
+function norm(t) { return String(t ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().replace(/\s+/g, " ").trim(); }
+
+const GRUPOS = {
+  lavagem: ["TOALHA","BOINA","ODORIZANTE","APLICADOR","VETRIFICADOR","CANHAO DE ESPUMA","APC","PULVERIZADOR","LUVA","BALDE","ESCOVA","POLIDOR","REVITALIZADOR PLASTICO","PISO","CANETA"],
+  acessorios: ["BICO JATO","CONEXAO ADAPTADORA","GANCHO","CARRINHO"],
+  pecas: ["ROLAMENTO","CILINDRO MESTRE EMBREAGEM","BICO INJETOR","RETENTORES","TENSOR CORREIA","CAIXA DIRECAO","ARTICULACAO AXIAL","BOBINA IGNICAO","BUCHA COMANDO VALVULA","COLUNA DIRECAO","PARAFUSO FIXACAO","PIVO SUSPENSAO","MOLA","ABRACADEIRAS DIVERSAS","MANGUEIRAS","COLA"]
+};
+// palavras no NOME (para os produtos do grupo DIVERSOS/GERAIS); a ordem importa
+const PALAVRAS = [
+  ["pecas", /\b(PASTILHA|BUCHA|ROLAMENTO|ROL|FILTRO|SAPATA|CILINDRO|LAMPADA|FAROL|FAR|CRUZETA|CUBO|RET|RETENTOR|RENTENTOR|CORRENTE|FLANGE|DEFLETOR|GUIA|MOLA|VELA|BARRA|REPARO|AMORT|AMORTECEDOR|BOMBA|CALOTA|CARTER|LANTERNA|TERMINAL|CHICOTE|BIELETA|BOBINA|JUNTA|PINO|PIVO|CABECOTE|ATUADOR|CORREIA|PALHETA|CAMISA|COXIM|DISCO|TAMPA|PARAFUSO|PARAF|REBITE|ARRUELA|PRESILHA|GRAMPO|CLIPS|ABRAC|ABRACADEIRA|MANG|MANGUEIRA|SENSOR|VALVULA|EMBREAGEM|EMBR|PLATO|ESTABILIZADOR|BANDEJA|RADIADOR|TENSOR|POLIA|SUSPENSAO|SUSP|HOMOCINETICA|TRIZETA|RETROVISOR|MACANETA|FECHADURA|CONECTOR|BICO INJETOR|SEMI|EIXO|ROLDANA|COIFA|BATENTE|TUBO|MOTOR|RELE|FUSIVEL|INTERRUPTOR|ALTERNADOR|ARRANQUE|ESCAPAMENTO|SILENCIOSO|CATALISADOR|VOLANTE|FREIO|LONA|TAMBOR|PISTAO|BIELA|ANEL|BRONZINA|COMANDO|TUCHO|CABO|SELANTE|COLA|ARALDITE|BLOCO|CAIXA)\b/],
+  ["acessorios", /\bBICO (LAVAGEM|ENGATE|GERADOR|JATO|ESPUMA|PULVERIZADOR)\b/],
+  ["pecas", /\b(BICO|AUTOMATICO|RESERVATORIO|SONDA|LAMP|TURBO|CIL|SEMIEIXO|ARTICULACAO|CAMBIO|VENTILADOR|GARGALO|LIMITADOR|TRAVA|LOCKER|ARR|CARCACA|BOCAL|BUJAO|COLAR|PORCA|ESPELHO|PEDAL|SUPORTE MOTOR|IGNICAO|INJ|VELAS|PARABRISA|IWP\d*|RODA|SX)\b/],
+  ["oleos", /\b(DESCARBONIZANTE|DESMINERALIZADA|ARLA)\b/],
+  ["lavagem", /\b(GLASS|POLIR|MASSA|SUPRA|SANDET|DARKER|MICROLAV|PLP|BRILHO|DET|DESINCRUSTANTE|DESENENGRAXANTE|IMPER|ESTOPA|VASELINA|CLAYBAR|ALCOOL|PNCEL|EXTRACTUS|GLAZY|MITTUS|REVELAX|SINERGY|SOFT|ZUCS|SANITIZANTE|AUTOLIMPE|LAVAGEM|PNEUS|BORRACHAS|PLASTICO|PLASTICOS|COURO|ESTOFADO|TECIDO|CARPETE|MOTOR LIMPO|ODOR|PERFUME|CHEIRINHO|BRILHA|BRILHANTE|SPRAY ACABAMENTO|SNOW|FOAM|RESTAURA|MULTIUSO)\b/],
+  ["oleos", /\b(OLEO|ADITIVO|FLUIDO|GRAXA|DESENGRIPANTE|ARLA|LUBRIFICANTE|ARREFECIMENTO)\b/],
+  ["lavagem", /\b(LIMPA|LIMPADOR|TOALHA|BOINA|ESCOVA|APLICADOR|AROMA|AROMATIZANTE|ODORIZANTE|ESPONJA|PANO|CLAY|POLITRIZ|BRIGHT|CERA|SHAMPOO|SABAO|DETERGENTE|VITRIFICADOR|VETRIFICADOR|PRETINHO|REVITALIZADOR|POLIDOR|COMPOSTO|LUVA|MICROFIBRA|PINCEL|BORRIFADOR|PULVERIZADOR|APC|DESENGRAXANTE|LAVA|ESTETICA|DETAILER|DIFUSOR|REFIL|SPEEDY|VEXUS|SECANTE|SILICONE|HIDRATANTE|PROTETOR|PNEU|DESCONTAMINANTE|REMOVEDOR|ESPUMA|FLANELA|CHAMOIS|BALDE|ACID|SELADOR|NANO|COATING|QUARTZO|INTERNO|VIDRO|VIDROS)\b/],
+  ["acessorios", /\b(BICO|PISTOLA|SUPORTE|GANCHO|BANQUETA|CARRINHO|CARRO|PROLONGADOR|ADAPT|ADAPTADOR|ENGATE|CONEXAO|TINTA|FITA|CHAVE|PINCEIS|LANTERNA|TAPETE|CAPA|ORGANIZADOR|EXTENSAO|COMPRESSOR|ASPIRADOR|LAVADORA|MAQUINA|ENGATE|MANOMETRO|REGISTRO|JOELHO|TEE|ESPIGAO|UNIAO|ENG RAPIDO|LAVADORA)\b/]
+];
+function agrupar(grupo, nome) {
+  const g = norm(grupo), n = norm(nome).replace(/[^A-Z0-9 ]/g, " ");
+  if (/LAV|ESTET|LIMP|CERA|SHAMP|PNEU|RODA/.test(g)) return "lavagem";
+  if (/PECA|FILTRO|FREIO|LAMP|PALHET/.test(g)) return "pecas";
+  for (const [cat, lista] of Object.entries(GRUPOS)) if (lista.includes(g)) return cat;
+  if (/OLEO|FLUID|ADITIV|LUBRI/.test(g)) return /\b(BOMBA|FILTRO)\b/.test(n) ? "pecas" : "oleos";
+  if (/ACESS/.test(g)) return "acessorios";
+  for (const [cat, re] of PALAVRAS) if (re.test(n)) return cat;
+  return "diversos";
 }
+function categoria(grupo, nome) { return agrupar(grupo, nome); }

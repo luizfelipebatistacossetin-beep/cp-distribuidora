@@ -572,11 +572,11 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
 
   let CATS = [
     { id: "todos", nome: "Todos" },
-    { id: "lavagem", nome: "Lavagem e estética" },
-    { id: "pneus", nome: "Pneus e rodas" },
-    { id: "pecas", nome: "Peças" },
+    { id: "lavagem", nome: "Limpeza e estética" },
+    { id: "acessorios", nome: "Equipamentos e acessórios" },
     { id: "oleos", nome: "Óleos e fluidos" },
-    { id: "acessorios", nome: "Acessórios" }
+    { id: "pecas", nome: "Peças automotivas" },
+    { id: "pneus", nome: "Pneus e rodas" }
   ];
 
   // Catálogo de demonstração. Só aparece se o endereço /api/produtos não responder
@@ -662,7 +662,7 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
     const contagem = { todos: PRODUTOS.length };
     PRODUTOS.forEach(p => contagem[p.cat] = (contagem[p.cat] || 0) + 1);
     const col = new Intl.Collator("pt-BR");
-    const ordenadas = [...CATS].sort((a, b) => (a.id === "todos" ? -1 : b.id === "todos" ? 1 : col.compare(a.nome, b.nome)));
+    const ordenadas = CATS; // ordem fixa: Todos, Limpeza e estética primeiro
     const atual = $("#catsAtual"); if (atual) atual.textContent = filtro === "todos" ? "Todos os produtos" : (nomeCat[filtro] || filtro);
     $("#chips").innerHTML = ordenadas.map(c =>
       `<button class="chip" type="button" data-cat="${c.id}" aria-pressed="${c.id === filtro}">${esc(c.nome)} <small>${fmt.format(contagem[c.id] || 0)}</small></button>`
