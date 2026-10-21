@@ -188,6 +188,17 @@ html{scrollbar-color:var(--tinta-2) var(--concreto)}
 .vazio .acoes{justify-content:center;margin-top:1.4rem}
 
 /* Marcas */
+/* Esteira de marcas: passa sozinha, para quando o mouse está em cima */
+.esteira{overflow:hidden;border-block:1px solid var(--linha);-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.esteira-trilho{display:flex;width:max-content;animation:esteira 45s linear infinite}
+.esteira:hover .esteira-trilho,.esteira:focus-within .esteira-trilho{animation-play-state:paused}
+@keyframes esteira{to{transform:translateX(-50%)}}
+.marca{flex:none;display:flex;align-items:center;justify-content:center;width:12rem;height:7rem;padding:1rem 1.4rem;border-right:1px solid var(--linha);background:none;border-top:0;border-bottom:0;border-left:0;cursor:pointer;color:var(--tinta-2);transition:background-color .2s ease,color .2s ease}
+.marca:hover{background:var(--papel);color:var(--tinta)}
+.marca img{max-width:100%;max-height:3.4rem;object-fit:contain;filter:grayscale(1);opacity:.8;transition:filter .2s ease,opacity .2s ease}
+.marca:hover img{filter:none;opacity:1}
+.marca strong{font-family:var(--display);font-style:italic;font-weight:850;font-stretch:120%;font-size:1.35rem;letter-spacing:-.02em;line-height:1.05;text-align:center}
+@media (prefers-reduced-motion:reduce){.esteira{overflow-x:auto}.esteira-trilho{animation:none}}
 .marcas-lista{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--linha)}
 .marcas-lista a{display:flex;flex-direction:column;justify-content:space-between;gap:1.2rem;padding:1.6rem 1.25rem 1.4rem;border-bottom:1px solid var(--linha);border-right:1px solid var(--linha);text-decoration:none;min-width:0;transition:background-color .2s ease}
 .marcas-lista a:first-child{border-left:1px solid var(--linha)}
@@ -461,14 +472,11 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
       <div class="cabeca">
         <div>
           <h2 class="titulo" id="t-marcas">Marcas na loja</h2>
-          <p class="sub">Procurando uma marca específica? Toque nela e pergunte direto para a equipe.</p>
+          <p class="sub">Toque numa marca para ver os produtos dela no catálogo.</p>
         </div>
       </div>
-      <div class="marcas-lista">
-        <a class="wa" href="#" target="_blank" rel="noopener" translate="no" data-msg="Olá! Quais produtos da Autolimpe vocês têm na loja?"><strong>Autolimpe</strong><span>Perguntar no WhatsApp<svg class="i" aria-hidden="true"><use href="#i-seta"/></svg></span></a>
-        <a class="wa" href="#" target="_blank" rel="noopener" translate="no" data-msg="Olá! Quais produtos da Soft99 vocês têm na loja?"><strong>Soft99</strong><span>Perguntar no WhatsApp<svg class="i" aria-hidden="true"><use href="#i-seta"/></svg></span></a>
-        <a class="wa" href="#" target="_blank" rel="noopener" translate="no" data-msg="Olá! Quais produtos da Kers vocês têm na loja?"><strong>Kers</strong><span>Perguntar no WhatsApp<svg class="i" aria-hidden="true"><use href="#i-seta"/></svg></span></a>
-        <a class="wa" href="#" target="_blank" rel="noopener" translate="no" data-msg="Olá! Quais produtos do Grupo Teixeira Pinto vocês têm na loja?"><strong>Teixeira Pinto</strong><span>Perguntar no WhatsApp<svg class="i" aria-hidden="true"><use href="#i-seta"/></svg></span></a>
+      <div class="esteira" id="esteira" aria-label="Marcas na loja">
+        <div class="esteira-trilho" id="esteiraTrilho"></div>
       </div>
     </div>
   </section>
@@ -850,6 +858,35 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
     catch { avisar("Não deu para copiar automaticamente. Selecione o texto e copie manualmente."); }
   }
 
+  // Esteira de marcas. Para trocar o texto pela logo, coloque o arquivo em img/marcas/
+  // com o nome indicado em "logo" (PNG ou SVG com fundo transparente).
+  const MARCAS = [
+    { nome: "Vonixx", busca: "VONIXX", logo: "img/marcas/vonixx.png" },
+    { nome: "Finisher", busca: "FINISHER", logo: "img/marcas/finisher.png" },
+    { nome: "SGT Tools", busca: "SGT TOOLS", logo: "img/marcas/sgt-tools.png" },
+    { nome: "Kers", busca: "KERS", logo: "img/marcas/kers.png" },
+    { nome: "Vintex", busca: "VINTEX", logo: "img/marcas/vintex.png" },
+    { nome: "Teixeira Pinto", busca: "TEIXEIRA PINTO", logo: "img/marcas/teixeira-pinto.png" },
+    { nome: "Nobrecar", busca: "NOBRECAR", logo: "img/marcas/nobrecar.png" },
+    { nome: "Protelim", busca: "PROTELIM", logo: "img/marcas/protelim.png" },
+    { nome: "Autolimpe", busca: "AUTOLIMPE", logo: "img/marcas/autolimpe.png" },
+    { nome: "Soft99", busca: "SOFT99", logo: "img/marcas/soft99.png" },
+    { nome: "Razux", busca: "RAZUX", logo: "img/marcas/razux.png" },
+    { nome: "3M", busca: "3M", logo: "img/marcas/3m.png" },
+    { nome: "Menzerna", busca: "MENZERNA", logo: "img/marcas/menzerna.png" },
+    { nome: "Lincoln", busca: "LINCOLN", logo: "img/marcas/lincoln.png" },
+    { nome: "Centralsul", busca: "CENTRALSUL", logo: "img/marcas/centralsul.png" },
+    { nome: "Zacs", busca: "ZACS", logo: "img/marcas/zacs.png" }
+  ];
+  function desenharMarcas() {
+    const item = (m, oculto) => `<button class="marca" type="button" data-marca="${esc(m.busca)}"${oculto ? ' aria-hidden="true" tabindex="-1"' : ""} title="Ver produtos ${esc(m.nome)}">
+        <img src="${m.logo}" alt="${esc(m.nome)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('strong'),{textContent:this.alt}))">
+      </button>`;
+    // a lista aparece duas vezes seguidas para a esteira girar sem emenda
+    $("#esteiraTrilho").innerHTML = MARCAS.map(m => item(m, false)).join("") + MARCAS.map(m => item(m, true)).join("");
+  }
+  desenharMarcas();
+
   // Painel de categorias: abre embaixo do botão, com todas as categorias à vista
   function abrirCats(abrir) {
     $("#chips").hidden = !abrir;
@@ -861,6 +898,12 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
     const t = e.target.closest("button, a");
     if (!t) return;
     const d = t.dataset;
+    if (d.marca) {
+      termo = d.marca; filtro = "todos"; $("#busca").value = d.marca;
+      desenharChips(); desenharGrade();
+      document.getElementById("produtos").scrollIntoView({ behavior: "smooth" });
+      return;
+    }
     if (t.id === "catsBtn") { abrirCats($("#chips").hidden); return; }
     if (d.cat) { filtro = d.cat; desenharChips(); desenharGrade(); abrirCats(false); return; }
     if (d.add) { mudar(d.add, 1); return; }
