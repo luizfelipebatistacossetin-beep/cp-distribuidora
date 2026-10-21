@@ -41,7 +41,7 @@ module.exports = async (req, res) => {
 
     // Ordem de prioridade (vale dentro de cada grupo):
     //   1) em estoque  2) com foto  3) limpeza/estética antes dos outros grupos  4) nome
-    const produtos = visiveis.map(converter).filter(p => p.id && p.nome && p.cat !== "diversos")
+    const produtos = visiveis.map(converter).filter(p => p.id && p.nome && !CATEGORIAS_OCULTAS.includes(p.cat))
       .sort((a, b) => (temEstoque(b) - temEstoque(a)) || (temFoto(b) - temFoto(a)) ||
         (ordemGrupo(a.cat) - ordemGrupo(b.cat)) || a.nome.localeCompare(b.nome, "pt-BR"));
 
@@ -58,6 +58,10 @@ module.exports = async (req, res) => {
 };
 
 // Grupos/palavras/produtos escondidos direto pelo código (além da tabela "ocultos")
+// Categorias inteiras que não aparecem no site
+//   diversos = itens de uso interno da loja | pecas = peças automotivas (a loja pediu para tirar)
+const CATEGORIAS_OCULTAS = ["diversos", "pecas"];
+
 const OCULTOS_FIXOS = [
   { tipo: "grupo", valor: "AUTOMOTIVO" },
   { tipo: "grupo", valor: "CLAY BAR" },
