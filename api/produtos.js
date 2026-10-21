@@ -35,9 +35,11 @@ module.exports = async (req, res) => {
       lista.push(...pagina);
       if (pagina.length < 1000) break;
     }
-    // Em estoque primeiro; depois os esgotados (cada grupo em ordem alfabética)
+    // Ordem de prioridade (vale dentro de cada grupo):
+    //   1) em estoque  2) com foto  3) limpeza/estética antes dos outros grupos  4) nome
     const produtos = lista.map(converter).filter(p => p.id && p.nome)
-      .sort((a, b) => (temEstoque(b) - temEstoque(a)) || a.nome.localeCompare(b.nome, "pt-BR"));
+      .sort((a, b) => (temEstoque(b) - temEstoque(a)) || (temFoto(b) - temFoto(a)) ||
+        (ordemGrupo(a.cat) - ordemGrupo(b.cat)) || a.nome.localeCompare(b.nome, "pt-BR"));
 
     // Data da última atualização feita pela ponte
     const ultima = lista.reduce((max, p) => (p.atualizado_em && p.atualizado_em > max ? p.atualizado_em : max), "");
@@ -52,6 +54,9 @@ module.exports = async (req, res) => {
 };
 
 function temEstoque(p) { return p.estoque == null || p.estoque > 0 ? 1 : 0; }
+function temFoto(p) { return p.foto ? 1 : 0; }
+const ORDEM_GRUPOS = ["lavagem", "pneus", "acessorios", "oleos", "pecas"];
+function ordemGrupo(cat) { const i = ORDEM_GRUPOS.indexOf(cat); return i < 0 ? 99 : i; }
 
 // Transforma uma linha da tabela "produtos" no formato que o site usa.
 function converter(item) {
