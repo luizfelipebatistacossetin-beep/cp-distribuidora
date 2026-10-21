@@ -136,6 +136,14 @@ html{scrollbar-color:var(--tinta-2) var(--concreto)}
 .ordem select:hover{border-color:var(--tinta-2)}
 .ordem select:focus-visible{outline:none;border-color:var(--sinal)}
 .chips{display:flex;gap:.5rem;overflow-x:auto;padding-bottom:.4rem;margin-bottom:1.6rem;scrollbar-width:thin;overscroll-behavior-x:contain}
+.cats{margin-bottom:1.6rem}
+.cats-btn{display:flex;align-items:center;gap:.6rem;width:100%;border:1.5px solid var(--linha);background:var(--papel);border-radius:12px;padding:.85rem 1rem;font-weight:600;font-size:.95rem;color:var(--tinta-2);text-align:left;transition:border-color .15s ease}
+.cats-btn:hover{border-color:var(--tinta)}
+.cats-btn b{color:var(--tinta);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cats-btn .i{transition:transform .2s ease}
+.cats-btn[aria-expanded="true"] .i{transform:rotate(180deg)}
+.cats .chips{flex-wrap:wrap;overflow:visible;margin:.6rem 0 0;padding:1rem;border:1.5px solid var(--linha);border-radius:12px;background:var(--papel);max-height:60vh;overflow-y:auto}
+.cats .chips[hidden]{display:none}
 .chip{flex:none;display:inline-flex;align-items:center;gap:.5rem;border:1.5px solid var(--linha);background:transparent;border-radius:99px;padding:.5rem .95rem;font-weight:600;font-size:.92rem;color:var(--tinta-2);transition:border-color .15s ease,color .15s ease,background-color .15s ease}
 .chip:hover{border-color:var(--tinta);color:var(--tinta)}
 .chip[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);color:var(--concreto)}
@@ -434,7 +442,12 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
         </div>
       </div>
 
-      <div class="chips" id="chips" role="group" aria-label="Categorias"></div>
+      <div class="cats">
+        <button class="cats-btn" type="button" id="catsBtn" aria-expanded="false" aria-controls="chips">
+          <span>Categorias</span><b id="catsAtual">Todos</b><svg class="i" aria-hidden="true"><use href="#i-baixo"/></svg>
+        </button>
+        <div class="chips" id="chips" role="group" aria-label="Categorias" hidden></div>
+      </div>
 
       <p class="aviso"><svg class="i" aria-hidden="true"><use href="#i-info"/></svg><span id="avisoTxt">Catálogo de demonstração. Valores e estoque são confirmados pela equipe no WhatsApp.</span></p>
 
@@ -648,7 +661,10 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
   function desenharChips() {
     const contagem = { todos: PRODUTOS.length };
     PRODUTOS.forEach(p => contagem[p.cat] = (contagem[p.cat] || 0) + 1);
-    $("#chips").innerHTML = CATS.map(c =>
+    const col = new Intl.Collator("pt-BR");
+    const ordenadas = [...CATS].sort((a, b) => (a.id === "todos" ? -1 : b.id === "todos" ? 1 : col.compare(a.nome, b.nome)));
+    const atual = $("#catsAtual"); if (atual) atual.textContent = filtro === "todos" ? "Todos os produtos" : (nomeCat[filtro] || filtro);
+    $("#chips").innerHTML = ordenadas.map(c =>
       `<button class="chip" type="button" data-cat="${c.id}" aria-pressed="${c.id === filtro}">${esc(c.nome)} <small>${fmt.format(contagem[c.id] || 0)}</small></button>`
     ).join("");
   }
@@ -834,12 +850,19 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
     catch { avisar("Não deu para copiar automaticamente. Selecione o texto e copie manualmente."); }
   }
 
+  // Painel de categorias: abre embaixo do botão, com todas as categorias à vista
+  function abrirCats(abrir) {
+    $("#chips").hidden = !abrir;
+    $("#catsBtn").setAttribute("aria-expanded", String(abrir));
+  }
+
   // Eventos
   document.addEventListener("click", (e) => {
     const t = e.target.closest("button, a");
     if (!t) return;
     const d = t.dataset;
-    if (d.cat) { filtro = d.cat; desenharChips(); desenharGrade(); return; }
+    if (t.id === "catsBtn") { abrirCats($("#chips").hidden); return; }
+    if (d.cat) { filtro = d.cat; desenharChips(); desenharGrade(); abrirCats(false); return; }
     if (d.add) { mudar(d.add, 1); return; }
     if (d.mais) { mudar(d.mais, 1); return; }
     if (d.menos) { mudar(d.menos, -1); return; }

@@ -35,9 +35,13 @@ module.exports = async (req, res) => {
       lista.push(...pagina);
       if (pagina.length < 1000) break;
     }
+    // Esconde o que estiver na tabela "ocultos" do Supabase (grupos, palavras ou produtos)
+    const ocultos = await buscarOcultos();
+    const visiveis = lista.filter(item => !estaOculto(item, ocultos));
+
     // Ordem de prioridade (vale dentro de cada grupo):
     //   1) em estoque  2) com foto  3) limpeza/estética antes dos outros grupos  4) nome
-    const produtos = lista.map(converter).filter(p => p.id && p.nome)
+    const produtos = visiveis.map(converter).filter(p => p.id && p.nome)
       .sort((a, b) => (temEstoque(b) - temEstoque(a)) || (temFoto(b) - temFoto(a)) ||
         (ordemGrupo(a.cat) - ordemGrupo(b.cat)) || a.nome.localeCompare(b.nome, "pt-BR"));
 
@@ -52,6 +56,31 @@ module.exports = async (req, res) => {
     res.status(502).json({ erro: "Não foi possível carregar os produtos agora." });
   }
 };
+
+async function buscarOcultos() {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/ocultos?select=tipo,valor`, {
+      headers: { apikey: SUPABASE_KEY, Accept: "application/json" }
+    });
+    if (!r.ok) return [];
+    return (await r.json()).map(o => ({ tipo: normalizar(o.tipo), valor: normalizar(o.valor) })).filter(o => o.valor);
+  } catch { return []; }
+}
+
+function normalizar(t) {
+  return String(t ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+// tipo "grupo": esconde o grupo inteiro (ex.: AUTOMOTIVO)
+// tipo "palavra": esconde produtos com essa palavra no nome (ex.: GASOLINA)
+// tipo "produto": esconde um produto pelo nome completo
+function estaOculto(item, ocultos) {
+  const grupo = normalizar(item.categoria), nome = normalizar(item.nome);
+  return ocultos.some(o =>
+    (o.tipo === "grupo" && grupo === o.valor) ||
+    (o.tipo === "palavra" && nome.includes(o.valor)) ||
+    (o.tipo === "produto" && nome === o.valor));
+}
 
 function temEstoque(p) { return p.estoque == null || p.estoque > 0 ? 1 : 0; }
 function temFoto(p) { return p.foto ? 1 : 0; }
