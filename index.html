@@ -664,7 +664,8 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
       (!t || normal(p.nome + " " + p.espec + " " + p.placa + " " + (nomeCat[p.cat] || p.cat)).includes(t)));
     if (ordem !== "destaque") {
       const col = new Intl.Collator("pt-BR");
-      lista = [...lista].sort((a, b) => col.compare(a.nome, b.nome) * (ordem === "az" ? 1 : -1));
+      lista = [...lista].sort((a, b) => (esgotado(a) - esgotado(b)) || ((b.foto ? 1 : 0) - (a.foto ? 1 : 0)) ||
+        col.compare(a.nome, b.nome) * (ordem === "az" ? 1 : -1));
     }
     $("#status").textContent = lista.length ? `${lista.length} ${lista.length === 1 ? "produto" : "produtos"}` : "Nenhum produto encontrado";
     if (!lista.length) {
