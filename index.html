@@ -1,6 +1,39 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>CP Distribuidora Automotiva</title>
-<meta name="description" content="Produtos de limpeza, estética automotiva e acessórios para o seu carro em Xinguara – PA. Monte seu pedido e envie pelo WhatsApp.">
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CP Distribuidora Automotiva | Limpeza e estética automotiva em Xinguara – PA</title>
+<meta name="description" content="Produtos de limpeza, estética automotiva e acessórios em Xinguara – PA. Vonixx, Finisher, Kers, Soft99 e mais. Veja o estoque, monte seu pedido e envie pelo WhatsApp.">
+<link rel="icon" type="image/png" href="img/logo.png">
+<link rel="apple-touch-icon" href="img/logo.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="CP Distribuidora Automotiva">
+<meta property="og:title" content="CP Distribuidora Automotiva – Xinguara, PA">
+<meta property="og:description" content="Limpeza e estética automotiva, equipamentos e acessórios. Veja o estoque e peça pelo WhatsApp.">
+<meta property="og:image" content="https://cp-distribuidora.vercel.app/img/fachada.jpg">
+<meta property="og:url" content="https://cp-distribuidora.vercel.app/">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Store",
+  "name": "CP Distribuidora Automotiva",
+  "description": "Produtos de limpeza, estética automotiva e acessórios em Xinguara – PA.",
+  "image": "https://cp-distribuidora.vercel.app/img/fachada.jpg",
+  "logo": "https://cp-distribuidora.vercel.app/img/logo.png",
+  "url": "https://cp-distribuidora.vercel.app/",
+  "telephone": "+55 94 98410-2520",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Rua Pioneiro, 791, Marajoara",
+    "addressLocality": "Xinguara",
+    "addressRegion": "PA",
+    "addressCountry": "BR"
+  }
+}
+</script>
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1B1C1F" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,6 +78,8 @@
 }
 
 *,*::before,*::after{box-sizing:border-box}
+body{margin:0}
+[hidden]:not([hidden=until-found i]){display:none!important}
 html{scroll-behavior:smooth;scroll-padding-top:78px;-webkit-text-size-adjust:100%}
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
 body{background:var(--concreto);color:var(--tinta);font-family:var(--texto);font-size:1rem;line-height:1.55;
@@ -160,7 +195,9 @@ html{scrollbar-color:var(--tinta-2) var(--concreto)}
 .placa{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:1rem}
 .placa::before,.placa::after{content:"";position:absolute;background:var(--sinal);width:14%;height:150%;top:-25%;left:-2%;transform:skewX(-28deg)}
 .placa::after{left:11%;width:3%;opacity:.55}
-.placa span{position:relative;z-index:1;font-family:var(--display);font-style:italic;font-weight:850;font-stretch:125%;font-size:clamp(1.6rem,3vw,2.2rem);letter-spacing:-.02em;line-height:1;color:var(--tinta);max-width:100%;overflow-wrap:anywhere}
+.placa span{position:relative;z-index:1;font-family:var(--display);font-style:italic;font-weight:850;font-stretch:125%;font-size:clamp(1.6rem,3vw,2.2rem);letter-spacing:-.02em;line-height:1;color:var(--tinta);max-width:100%;overflow-wrap:normal;word-break:keep-all}
+.placa.longo span{font-size:clamp(1.15rem,2.2vw,1.7rem)}
+.placa.muito-longo span{font-size:clamp(.9rem,1.7vw,1.3rem)}
 .info{display:flex;flex-direction:column;gap:.3rem;padding:1rem 1rem 1.1rem;flex:1;min-width:0}
 .cat{font-size:.8rem;color:var(--sinal);font-weight:700}
 .nome{border:0;background:none;padding:0;text-align:left;font-weight:700;font-size:1.02rem;line-height:1.3;color:var(--tinta);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -193,11 +230,11 @@ html{scrollbar-color:var(--tinta-2) var(--concreto)}
 .esteira-trilho{display:flex;width:max-content;animation:esteira 45s linear infinite}
 .esteira:hover .esteira-trilho,.esteira:focus-within .esteira-trilho{animation-play-state:paused}
 @keyframes esteira{to{transform:translateX(-50%)}}
-.marca{flex:none;display:flex;align-items:center;justify-content:center;width:12rem;height:7rem;padding:1rem 1.4rem;border-right:1px solid var(--linha);background:none;border-top:0;border-bottom:0;border-left:0;cursor:pointer;color:var(--tinta-2);transition:background-color .2s ease,color .2s ease}
-.marca:hover{background:var(--papel);color:var(--tinta)}
-.marca img{max-width:100%;max-height:4.2rem;object-fit:contain;border-radius:6px;transition:transform .2s ease}
-.marca:hover img{transform:scale(1.05)}
-.marca strong{font-family:var(--display);font-style:italic;font-weight:850;font-stretch:120%;font-size:1.35rem;letter-spacing:-.02em;line-height:1.05;text-align:center}
+.marca-item{flex:none;display:flex;align-items:center;justify-content:center;width:12rem;height:7rem;padding:1rem 1.4rem;border-right:1px solid var(--linha);background:none;border-top:0;border-bottom:0;border-left:0;cursor:pointer;color:var(--tinta-2);transition:background-color .2s ease,color .2s ease}
+.marca-item:hover{background:var(--papel);color:var(--tinta)}
+.marca-item img{max-width:100%;max-height:4.2rem;object-fit:contain;border-radius:6px;transition:transform .2s ease}
+.marca-item:hover img{transform:scale(1.05)}
+.marca-item strong{font-family:var(--display);font-style:italic;font-weight:850;font-stretch:120%;font-size:1.35rem;letter-spacing:-.02em;line-height:1.05;text-align:center}
 @media (prefers-reduced-motion:reduce){.esteira{overflow-x:auto}.esteira-trilho{animation:none}}
 .marcas-lista{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--linha)}
 .marcas-lista a{display:flex;flex-direction:column;justify-content:space-between;gap:1.2rem;padding:1.6rem 1.25rem 1.4rem;border-bottom:1px solid var(--linha);border-right:1px solid var(--linha);text-decoration:none;min-width:0;transition:background-color .2s ease}
@@ -351,6 +388,8 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
 </style>
+</head>
+<body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-busca" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
@@ -460,7 +499,7 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
         <div class="chips" id="chips" role="group" aria-label="Categorias" hidden></div>
       </div>
 
-      <p class="aviso"><svg class="i" aria-hidden="true"><use href="#i-info"/></svg><span id="avisoTxt">Catálogo de demonstração. Valores e estoque são confirmados pela equipe no WhatsApp.</span></p>
+      <p class="aviso"><svg class="i" aria-hidden="true"><use href="#i-info"/></svg><span id="avisoTxt">Carregando o estoque da loja…</span></p>
 
       <p class="vh" id="status" aria-live="polite"></p>
       <div class="grade" id="grade"></div>
@@ -648,7 +687,12 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
 
   const midia = (p, cls = "") => p.foto
     ? `<img src="${esc(p.foto)}" alt="${esc(p.nome)}" width="282" height="282" loading="lazy">`
-    : `<div class="placa ${cls}" aria-hidden="true"><span>${esc(p.placa)}</span></div>`;
+    : `<div class="placa ${cls} ${tamanhoPlaca(p.placa)}" aria-hidden="true"><span>${esc(p.placa)}</span></div>`;
+  // nomes de marca compridos ficam menores para não quebrar no meio da palavra
+  function tamanhoPlaca(t) {
+    const maior = Math.max(...String(t || "").split(/\s+/).map(w => w.length));
+    return maior > 9 ? "muito-longo" : maior > 6 ? "longo" : "";
+  }
 
   const precoTxt = (p) => p.preco ? `<b>${esc(p.preco)}</b>` : "Preço <b>sob consulta</b>";
 
@@ -879,7 +923,7 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
     { nome: "Zacs", busca: "ZACS", logo: "img/marcas/zacs.png" }
   ];
   function desenharMarcas() {
-    const item = (m, oculto) => `<button class="marca" type="button" data-marca="${esc(m.busca)}"${oculto ? ' aria-hidden="true" tabindex="-1"' : ""} title="Ver produtos ${esc(m.nome)}">
+    const item = (m, oculto) => `<button class="marca-item" type="button" data-marca="${esc(m.busca)}"${oculto ? ' aria-hidden="true" tabindex="-1"' : ""} title="Ver produtos ${esc(m.nome)}">
         <img src="${m.logo}" alt="${esc(m.nome)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('strong'),{textContent:this.alt}))">
       </button>`;
     // a lista aparece duas vezes seguidas para a esteira girar sem emenda
@@ -952,7 +996,7 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
   }
 
   desenharChips();
-  desenharGrade();
+  $("#grade").innerHTML = `<div class="vazio" style="grid-column:1/-1"><strong>Carregando os produtos da loja…</strong></div>`;
   atualizarContador(false);
 
   // Busca a lista atualizada do sistema da loja (Noturno ERP) pelo endereço /api/produtos.
@@ -960,9 +1004,9 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
   async function carregarDoSistema() {
     try {
       const r = await fetch("/api/produtos", { headers: { Accept: "application/json" } });
-      if (!r.ok) return;
+      if (!r.ok) return falhou();
       const dados = await r.json();
-      if (!Array.isArray(dados.produtos) || !dados.produtos.length) return;
+      if (!Array.isArray(dados.produtos) || !dados.produtos.length) return falhou();
       PRODUTOS = dados.produtos;
       porId = Object.fromEntries(PRODUTOS.map(p => [p.id, p]));
       const novas = [...new Set(PRODUTOS.map(p => p.cat))].filter(c => !nomeCat[c]);
@@ -975,7 +1019,14 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
         (quando && !isNaN(quando) ? `, atualizado às ${quando.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}` : "") +
         ". A equipe confirma tudo no WhatsApp.";
       salvar(false); desenharChips(); desenharGrade();
-    } catch {}
+    } catch { falhou(); }
+  }
+  // Se o sistema da loja não responder, avisa e oferece o WhatsApp (não mostra produtos de exemplo)
+  function falhou() {
+    $("#avisoTxt").textContent = "Não conseguimos carregar o estoque agora. Fale com a equipe pelo WhatsApp.";
+    $("#grade").innerHTML = `<div class="vazio" style="grid-column:1/-1"><strong>Não foi possível carregar os produtos agora.</strong>
+      Tente de novo em alguns minutos ou pergunte direto para a equipe.
+      <div class="acoes"><a class="btn btn-sinal" href="${waLink("Olá! Quero ver os produtos disponíveis.")}" target="_blank" rel="noopener">${icone("msg")}Perguntar no WhatsApp</a></div></div>`;
   }
   carregarDoSistema();
 })();
