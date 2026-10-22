@@ -106,22 +106,29 @@ html{scrollbar-color:var(--tinta-2) var(--concreto)}
 .faixa svg{color:var(--sinal)}
 
 /* Cabeçalho */
-.topo{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:var(--papel);border-bottom:1px solid var(--linha)}
+.topo{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:#17181B;color:#F1EFEE;border-bottom:3px solid var(--sinal);box-shadow:0 8px 24px -16px rgba(0,0,0,.6)}
+.topo::after{content:"";position:absolute;left:0;bottom:-3px;width:min(34%,260px);height:6px;background:var(--sinal);clip-path:polygon(0 0,100% 0,calc(100% - 6px) 100%,0 100%)}
 .topo .wrap{display:flex;align-items:center;gap:1.5rem;padding-block:.7rem}
 .marca{display:flex;align-items:center;flex:none}
 .marca img{height:54px;width:auto}
-.marca .l1{display:var(--logo-claro)} .marca .l2{display:var(--logo-escuro)}
+.marca .l1{display:none} .marca .l2{display:block}
 .nav{display:flex;gap:.25rem;margin-left:auto}
-.nav a{text-decoration:none;font-weight:600;font-size:.95rem;padding:.5rem .8rem;border-radius:6px;color:var(--tinta-2);transition:color .15s ease,background-color .15s ease}
-.nav a:hover{color:var(--tinta);background:var(--concreto)}
-.nav a[aria-current="true"]{color:var(--tinta);box-shadow:inset 0 -2px 0 var(--sinal);border-radius:6px 6px 0 0}
+.nav a{text-decoration:none;font-weight:600;font-size:.95rem;padding:.5rem .8rem;border-radius:6px;color:#B9B5B2;transition:color .15s ease,background-color .15s ease}
+.nav a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav a[aria-current="true"]{color:#fff;box-shadow:inset 0 -2px 0 var(--sinal);border-radius:6px 6px 0 0}
+.topo-btn{display:inline-grid;place-items:center;width:2.75rem;height:2.75rem;border-radius:8px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#fff;flex:none;transition:background-color .15s ease,border-color .15s ease}
+.topo-btn:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3)}
+.topo-btn .i{width:1.25rem;height:1.25rem}
+.topo-whats{display:inline-flex;width:auto;gap:.5rem;padding-inline:.9rem;font-weight:700;font-size:.92rem;text-decoration:none}
+.menu-btn{display:none}
 .ir-loja{display:none}
-.btn-pedido{display:inline-flex;align-items:center;gap:.55rem;background:var(--tinta);color:var(--concreto);border:0;border-radius:8px;padding:.62rem 1rem;font-weight:700;font-size:.95rem;transition:background-color .15s ease,transform .15s ease}
-.btn-pedido:hover{background:var(--sinal);color:var(--sobre-sinal)}
+.btn-pedido{display:inline-flex;align-items:center;gap:.55rem;background:var(--sinal);color:#fff;border:0;border-radius:8px;padding:.62rem 1rem;font-weight:700;font-size:.95rem;transition:background-color .15s ease,transform .15s ease}
+.btn-pedido:hover{background:#fff;color:var(--sinal)}
 .btn-pedido:active{transform:scale(.97)}
-.contador{min-width:1.5rem;height:1.5rem;display:inline-grid;place-items:center;border-radius:99px;background:var(--sinal);color:var(--sobre-sinal);font-size:.78rem;font-variant-numeric:tabular-nums;padding-inline:.35rem}
-.btn-pedido:hover .contador{background:var(--sobre-sinal);color:var(--sinal)}
-.contador.zero,.btn-pedido:hover .contador.zero{background:color-mix(in srgb,var(--concreto) 22%,transparent);color:var(--concreto)}
+.contador{min-width:1.5rem;height:1.5rem;display:inline-grid;place-items:center;border-radius:99px;background:#fff;color:var(--sinal);font-size:.78rem;font-variant-numeric:tabular-nums;padding-inline:.35rem}
+.btn-pedido:hover .contador{background:var(--sinal);color:#fff}
+.contador.zero{background:rgba(255,255,255,.25);color:#fff}
+.btn-pedido:hover .contador.zero{background:rgba(217,20,27,.15);color:var(--sinal)}
 .contador.pulo{animation:pulo .35s cubic-bezier(.2,.9,.3,1.4)}
 @keyframes pulo{from{transform:scale(1.45)}to{transform:scale(1)}}
 
@@ -358,14 +365,18 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
   .ficha-txt{overflow:visible}
 }
 @media (max-width: 760px){
-  .nav{display:none}
-  .btn-pedido{margin-left:auto}
-  .topo .wrap{gap:.6rem}
-  .ir-loja{display:grid;place-items:center;width:2.9rem;height:2.9rem;border-radius:8px;color:var(--tinta);background:var(--concreto);margin-left:auto}
-  .ir-loja + .btn-pedido{margin-left:0}
+  .topo .wrap{gap:.5rem;flex-wrap:wrap}
+  .nav{display:none;order:9;flex:1 1 100%;flex-direction:column;gap:0;margin:0 0 .4rem;border-top:1px solid rgba(255,255,255,.1);padding-top:.4rem}
+  .topo.menu-aberto .nav{display:flex}
+  .nav a{padding:.8rem .4rem;font-size:1rem;border-radius:6px}
+  .nav a[aria-current="true"]{box-shadow:inset 3px 0 0 var(--sinal);border-radius:0}
+  .menu-btn{display:inline-grid;margin-left:auto}
+  .topo-whats span{display:none}
+  .topo-whats{width:2.75rem;padding:0;justify-content:center}
+  .btn-pedido{height:2.75rem;padding-inline:.85rem}
   .vitrine .acoes .btn{flex:1 1 100%}
   .btn-pedido .txt{display:none}
-  .marca img{height:44px}
+  .marca img{height:46px}
   .ferramentas{grid-template-columns:1fr}
   .ordem{justify-content:space-between}
   .ordem select{flex:1}
@@ -406,6 +417,7 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
   <symbol id="i-estrela" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></symbol>
   <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
   <symbol id="i-copiar" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></symbol>
   <symbol id="i-baixo" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
   <symbol id="i-seta" viewBox="0 0 24 24"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></symbol>
 </svg>
@@ -431,7 +443,8 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
       <a href="#como">Como comprar</a>
       <a href="#loja">A loja</a>
     </nav>
-    <a class="ir-loja" href="#loja" aria-label="Endereço e horário da loja"><svg class="i" aria-hidden="true"><use href="#i-pino"/></svg></a>
+    <button class="topo-btn menu-btn" type="button" id="menuBtn" aria-expanded="false" aria-label="Abrir menu"><svg class="i" aria-hidden="true"><use href="#i-menu"/></svg></button>
+    <a class="topo-btn topo-whats wa" href="#" target="_blank" rel="noopener" data-msg="Olá, CP Distribuidora! Vim pelo site e gostaria de atendimento." aria-label="Chamar no WhatsApp"><svg class="i" aria-hidden="true"><use href="#i-msg"/></svg><span>WhatsApp</span></a>
     <button class="btn-pedido" type="button" id="abrirPedido" aria-label="Abrir seu pedido">
       <svg class="i" aria-hidden="true"><use href="#i-sacola"/></svg>
       <span class="txt">Seu pedido</span>
@@ -982,6 +995,12 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
   $("#ordem").addEventListener("change", (e) => { ordem = e.target.value; desenharGrade(); });
 
   document.querySelectorAll("a.wa").forEach(a => a.href = waLink(a.dataset.msg));
+
+  // Menu do celular: abre os links embaixo do topo e fecha ao escolher
+  const topo = document.querySelector(".topo"), menuBtn = $("#menuBtn");
+  const menu = (abrir) => { topo.classList.toggle("menu-aberto", abrir); menuBtn.setAttribute("aria-expanded", String(abrir)); menuBtn.setAttribute("aria-label", abrir ? "Fechar menu" : "Abrir menu"); menuBtn.querySelector("use").setAttribute("href", abrir ? "#i-x" : "#i-menu"); };
+  menuBtn.addEventListener("click", () => menu(!topo.classList.contains("menu-aberto")));
+  document.querySelectorAll(".nav a").forEach(a => a.addEventListener("click", () => menu(false)));
 
   // Destaca no menu a seção visível
   const links = [...document.querySelectorAll(".nav a")];
