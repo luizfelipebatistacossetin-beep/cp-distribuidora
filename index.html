@@ -711,7 +711,8 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
   const precoTxt = (p) => p.preco ? `<b>${esc(p.preco)}</b>` : "Preço <b>sob consulta</b>";
 
   const estoqueTxt = (p) => p.estoque == null ? "" : esgotado(p)
-    ? `<span class="estoque zero">Esgotado</span>` : `<span class="estoque">Em estoque</span>`;
+    ? `<span class="estoque zero">Esgotado</span>`
+    : `<span class="estoque"><b>${fmt.format(p.estoque)}</b> em estoque</span>`;
 
   const controle = (p, forte = false) => {
     const q = pedido[p.id] || 0;
@@ -902,7 +903,7 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
         <span class="cat">${esc(nomeCat[p.cat] || p.cat)}</span>
         <h2 id="t-ficha">${esc(p.nome)}</h2>
         <p>${esc(p.desc)}</p>
-        <dl><dt>Embalagem</dt><dd>${esc(p.espec)}</dd><dt>Preço</dt><dd>${p.preco ? esc(p.preco) : "Sob consulta"}</dd>${p.estoque == null ? "" : `<dt>Estoque</dt><dd>${esgotado(p) ? "Esgotado" : "Disponível"}</dd>`}</dl>
+        <dl>${p.espec ? `<dt>Marca</dt><dd>${esc(p.espec)}</dd>` : ""}<dt>Preço</dt><dd>${p.preco ? esc(p.preco) : "Sob consulta"}</dd>${p.estoque == null ? "" : `<dt>Estoque</dt><dd>${esgotado(p) ? "Esgotado" : `${fmt.format(p.estoque)} ${Number(p.estoque) === 1 ? "unidade" : "unidades"}`}</dd>`}</dl>
         <div class="acoes">
           <div class="ficha-ctl" data-id="${p.id}">${controle(p, true)}</div>
           <a class="btn btn-linha" href="${waLink(`Olá! Vocês têm ${p.nome} (${p.espec})? Qual o valor?`)}" target="_blank" rel="noopener">${icone("msg")}Perguntar sobre este produto</a>
