@@ -227,6 +227,8 @@ html{scrollbar-color:var(--tinta-2) var(--concreto)}
 .qtd{margin-top:.6rem;display:grid;grid-template-columns:2.6rem 1fr 2.6rem;align-items:center;border:1.5px solid var(--sinal);border-radius:8px;overflow:hidden}
 .qtd button{border:0;background:transparent;height:2.5rem;display:grid;place-items:center;color:var(--sinal);transition:background-color .15s ease}
 .qtd button:hover{background:color-mix(in srgb,var(--sinal) 12%,transparent)}
+.qtd button.no-limite{opacity:.35}
+.limite-aviso{display:block;margin-top:.35rem;font-size:.78rem;font-weight:600;color:var(--tinta-2)}
 .qtd output{text-align:center;font-weight:700;font-variant-numeric:tabular-nums;font-size:.95rem}
 .vazio{grid-column:1/-1;padding:3rem 1rem;text-align:center;color:var(--tinta-2)}
 .vazio strong{display:block;color:var(--tinta);font-size:1.15rem;margin-bottom:.4rem}
@@ -688,7 +690,7 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
     gravar(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
   };
   let pedido = guardar.ler("cp-pedido", {});
-  for (const id of Object.keys(pedido)) if (!porId[id] || !(pedido[id] > 0)) delete pedido[id];
+  for (const id of Object.keys(pedido)) if (!(pedido[id] > 0)) delete pedido[id];
   let cliente = guardar.ler("cp-cliente", { nome: "", obs: "" });
   let filtro = "todos", termo = "", ordem = "destaque";
 
@@ -714,6 +716,16 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
     ? `<span class="estoque zero">Esgotado</span>`
     : `<span class="estoque"><b>${fmt.format(p.estoque)}</b> em estoque</span>`;
 
+  // Quantidade máxima que o cliente pode pedir = estoque do sistema
+  const limite = (p) => p.estoque == null ? 99 : Math.max(0, Math.floor(Number(p.estoque) || 0));
+  const unid = (n) => `${fmt.format(n)} ${n === 1 ? "unidade" : "unidades"}`;
+  const btnMais = (p, id) => {
+    const cheio = (pedido[id] || 0) >= limite(p);
+    return `<button type="button" data-mais="${id}"${cheio ? ' class="no-limite"' : ""} aria-label="${cheio ? `Máximo em estoque: ${unid(limite(p))}` : "Aumentar quantidade"}">${icone("mais")}</button>`;
+  };
+  const avisoLimite = (p, id) => (pedido[id] || 0) >= limite(p) && p.estoque != null
+    ? `<small class="limite-aviso">Limite do estoque</small>` : "";
+
   const controle = (p, forte = false) => {
     const q = pedido[p.id] || 0;
     if (esgotado(p) && !q) return `<a class="add avisar" href="${waLink(`Olá! Me avisem quando chegar ${p.nome} (${p.espec}).`)}" target="_blank" rel="noopener">${icone("msg")}Avisar quando chegar</a>`;
@@ -721,7 +733,7 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
     return `<div class="qtd" role="group" aria-label="Quantidade de ${esc(p.nome)}">
       <button type="button" data-menos="${p.id}" aria-label="Diminuir quantidade">${icone("menos")}</button>
       <output>${q} no pedido</output>
-      <button type="button" data-mais="${p.id}" aria-label="Aumentar quantidade">${icone("mais")}</button></div>`;
+      ${btnMais(p, p.id)}</div>${avisoLimite(p, p.id)}`;
   };
 
   // Categorias
@@ -800,8 +812,14 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
 
   function mudar(id, delta) {
     const atual = pedido[id] || 0;
-    if (delta > 0 && esgotado(porId[id])) { avisar(`${porId[id].nome} está esgotado no momento.`); return; }
-    const novo = Math.max(0, Math.min(99, atual + delta));
+    const p = porId[id];
+    if (delta > 0 && esgotado(p)) { avisar(`${p.nome} está esgotado no momento.`); return; }
+    if (delta > 0 && atual >= limite(p)) {
+      avisar(`Temos só ${unid(limite(p))} de ${p.nome} em estoque. Precisa de mais? Fale com a equipe.`, "WhatsApp",
+        () => window.open(waLink(`Olá! Preciso de mais unidades de ${p.nome}. Vocês conseguem?`), "_blank", "noopener"));
+      return;
+    }
+    const novo = Math.max(0, Math.min(limite(p), 99, atual + delta));
     if (novo === atual) return;
     if (novo === 0) { remover(id); return; }
     pedido[id] = novo;
@@ -844,7 +862,7 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
 
   // Mensagem do pedido
   function mensagemPedido() {
-    const linhas = Object.entries(pedido).map(([id, q]) => `• ${q}x ${porId[id].nome} (${porId[id].espec})`);
+    const linhas = Object.entries(pedido).filter(([id]) => porId[id]).map(([id, q]) => `• ${q}x ${porId[id].nome} (${porId[id].espec})`);
     let m = "Olá, CP Distribuidora! Quero fazer um pedido pelo site:\n\n" + linhas.join("\n");
     if (cliente.nome.trim()) m += `\n\nNome: ${cliente.nome.trim()}`;
     if (cliente.obs.trim()) m += `\nObservações: ${cliente.obs.trim()}`;
@@ -855,7 +873,7 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
   // Gaveta do pedido
   function desenharPedido() {
     const corpo = $("#pedidoCorpo"), pe = $("#pedidoPe");
-    const ids = Object.keys(pedido);
+    const ids = Object.keys(pedido).filter(id => porId[id]);
     if (!ids.length) {
       corpo.innerHTML = `<div class="pedido-vazio"><strong>Seu pedido está vazio.</strong>
         Adicione produtos do catálogo para montar a lista.<br>
@@ -871,8 +889,8 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
           <div class="qtd" role="group" aria-label="Quantidade de ${esc(p.nome)}">
             <button type="button" data-menos="${id}" aria-label="Diminuir quantidade">${icone("menos")}</button>
             <output>${pedido[id]}</output>
-            <button type="button" data-mais="${id}" aria-label="Aumentar quantidade">${icone("mais")}</button>
-          </div></div>
+            ${btnMais(p, id)}
+          </div>${avisoLimite(p, id)}</div>
         <button class="remover" type="button" data-remover="${id}" aria-label="Tirar ${esc(p.nome)} do pedido">${icone("lixo")}</button>
       </li>`;
     }).join("")}</ul>
@@ -1034,6 +1052,13 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
       CATS = [...CATS.filter(c => c.id === "todos" || PRODUTOS.some(p => p.cat === c.id)), ...novas.map(c => ({ id: c, nome: c }))];
       nomeCat = Object.fromEntries(CATS.map(c => [c.id, c.nome]));
       for (const id of Object.keys(pedido)) if (!porId[id]) delete pedido[id];
+      // se o estoque baixou desde a última visita, ajusta o pedido salvo e avisa
+      const ajustados = [];
+      for (const id of Object.keys(pedido)) {
+        const lim = limite(porId[id]);
+        if (pedido[id] > lim) { if (lim > 0) pedido[id] = lim; else delete pedido[id]; ajustados.push(porId[id].nome); }
+      }
+      if (ajustados.length) setTimeout(() => avisar(`Ajustamos seu pedido ao estoque atual: ${ajustados.join(", ")}.`), 600);
       if (!nomeCat[filtro]) filtro = "todos";
       const quando = dados.atualizadoEm ? new Date(dados.atualizadoEm) : null;
       $("#avisoTxt").textContent = "Estoque ligado ao sistema da loja" +
