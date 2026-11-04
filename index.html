@@ -335,7 +335,8 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
 .ficha[open]{animation:sobe .35s cubic-bezier(.16,1,.3,1)}
 @keyframes sobe{from{transform:translateY(16px);opacity:.4}to{transform:none;opacity:1}}
 .ficha-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);max-height:calc(100dvh - 32px)}
-.ficha .midia{aspect-ratio:auto;min-height:100%}
+.ficha .midia{aspect-ratio:1/1;min-height:0;align-self:start;max-height:calc(100dvh - 32px)}
+.ficha .midia img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 .ficha .placa span{font-size:clamp(2.4rem,6vw,3.6rem)}
 .ficha-txt{padding:1.6rem;overflow-y:auto;display:flex;flex-direction:column;gap:.7rem;position:relative}
 .ficha-txt .fechar{position:absolute;right:1rem;top:1rem}
@@ -362,7 +363,7 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
   .grade{grid-template-columns:repeat(2,minmax(0,1fr))}
   .marcas-lista a:nth-child(3){border-left:1px solid var(--linha)}
   .ficha-grid{grid-template-columns:1fr}
-  .ficha .midia{aspect-ratio:16/10;min-height:0}
+  .ficha .midia{aspect-ratio:4/3;min-height:0;max-height:45dvh}
   .ficha{overflow-y:auto}
   .ficha-grid{max-height:none}
   .ficha-txt{overflow:visible}
