@@ -376,11 +376,16 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(2px)}
   .nav a[aria-current="true"]{box-shadow:inset 3px 0 0 var(--sinal);border-radius:0}
   .menu-btn{display:inline-grid;margin-left:auto}
   .topo-whats span{display:none}
-  .topo-whats{width:2.75rem;padding:0;justify-content:center}
-  .btn-pedido{height:2.75rem;padding-inline:.85rem}
+  .topo .wrap{column-gap:6px}
+  .topo-btn,.topo-whats{width:42px;height:42px;padding:0;justify-content:center}
+  .topo-btn .i{width:20px;height:20px}
+  .btn-pedido{height:42px;padding:0 10px;gap:6px;flex:none;font-size:14px}
+  .btn-pedido .i{width:20px;height:20px}
+  .contador{min-width:22px;height:22px;font-size:12px}
+  .marca{flex:0 1 auto;min-width:0}
   .vitrine .acoes .btn{flex:1 1 100%}
   .btn-pedido .txt{display:none}
-  .marca img{height:46px}
+  .marca img{height:auto;max-height:46px;width:auto;max-width:100%}
   .ferramentas{grid-template-columns:1fr}
   .ordem{justify-content:space-between}
   .ordem select{flex:1}
