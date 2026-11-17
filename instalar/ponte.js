@@ -227,23 +227,30 @@ function acharFoto(cfg, id) {
   return mapaFotos.get(`PRODUTO_${String(id).trim().toUpperCase()}`) || null;
 }
 
-// Envia para o Supabase as fotos da pasta local que são novas ou mudaram.
-// Funciona igual no servidor e no computador do ESTOQUE.
-async function enviarFotosDaPasta(cfg) {
+// COMO O NOTURNO NOMEIA AS FOTOS
+//  - Servidor (Recover Image): PRODUTO_<id>.jpg  -> foto oficial do produto <id>
+//  - PCs de cadastro (ESTOQUE, Wender...): PRODUTO_<id><n>.jpg, onde <n> é o
+//    número da foto (0 = Foto 01). Ex.: produto 1090 -> PRODUTO_10900.jpg
+// Por isso os PCs de cadastro enviam com o prefixo "C_" (C_PRODUTO_10900.jpg)
+// e o servidor sabe que ali o último dígito é o número da foto.
+
+// Envia as fotos novas/alteradas da pasta. prefixo = "" (servidor) ou "C_" (PCs de cadastro)
+async function enviarFotosDaPasta(cfg, prefixo = "") {
   lerPastaFotos(cfg);
   let enviadas = {}, primeiraVez = false;
   try { enviadas = JSON.parse(fs.readFileSync(ARQ_FOTOS, "utf8")); } catch { primeiraVez = true; }
-  // Na primeira vez num computador novo, fotos antigas da pasta (podem estar
-  // desatualizadas) NÃO são enviadas: só as dos últimos DIAS_INICIO dias.
   const limiteInicio = primeiraVez && cfg.DIAS_INICIO ? Date.now() - Number(cfg.DIAS_INICIO) * 86400000 : 0;
+  const doisDias = Date.now() - 2 * 86400000;
   let novas = 0, falhas = 0;
-  const ids = [];
   for (const [base, arq] of mapaFotos) {
     if (!base.startsWith("PRODUTO_")) continue;
-    const nomeDestino = path.basename(arq).replace(/[^A-Za-z0-9_.-]/g, "_");
+    const nomeArq = path.basename(arq).replace(/[^A-Za-z0-9_.-]/g, "_");
+    const nomeDestino = prefixo + nomeArq;
     let st; try { st = fs.statSync(arq); } catch { continue; }
     const marca = st.mtimeMs + ":" + st.size;
     if (enviadas[nomeDestino] === marca) continue;
+    // migração: foto antiga já enviada com o nome velho (sem C_) não é reenviada
+    if (prefixo && enviadas[nomeArq] === marca && st.mtimeMs < doisDias) { enviadas[nomeDestino] = marca; continue; }
     if (limiteInicio && st.mtimeMs < limiteInicio) { enviadas[nomeDestino] = marca; continue; }
     const tipo = EXTENSOES[path.extname(arq).toLowerCase()] || "image/jpeg";
     try {
@@ -254,17 +261,15 @@ async function enviarFotosDaPasta(cfg) {
       });
       if (r.status >= 300) throw new Error(`${r.status} ${r.texto.slice(0, 200)}`);
       enviadas[nomeDestino] = marca; novas++;
-      ids.push({ id: base.slice(8), nomeDestino });
     } catch (e) { falhas++; if (falhas <= 3) log(`Aviso: não enviou a foto ${nomeDestino}: ${e.message}`); }
   }
   try { fs.writeFileSync(ARQ_FOTOS, JSON.stringify(enviadas)); } catch {}
-  return { novas, falhas, ids };
+  return { novas, falhas };
 }
 
-// Lista as fotos que já estão no Supabase (vindas do servidor OU do ESTOQUE).
-// Devolve: "PRODUTO_123" -> endereço público da foto mais recente.
+// Lista as fotos do Supabase: "NOME_SEM_EXTENSAO" -> { url, quando }
 async function fotosNoSupabase(cfg) {
-  const mapa = new Map(), data = new Map();
+  const mapa = new Map();
   for (let offset = 0; ; offset += 1000) {
     const r = await requisicao(`${cfg.SUPABASE_URL}/storage/v1/object/list/fotos`, {
       metodo: "POST",
@@ -275,48 +280,42 @@ async function fotosNoSupabase(cfg) {
     const lista = JSON.parse(r.texto);
     for (const o of lista) {
       if (!o || !o.name || !o.id) continue;
-      const ext = path.extname(o.name).toLowerCase();
-      if (!EXTENSOES[ext]) continue;
+      if (!EXTENSOES[path.extname(o.name).toLowerCase()]) continue;
       const base = path.basename(o.name, path.extname(o.name)).toUpperCase();
       const quando = Date.parse(o.updated_at || o.created_at || 0) || 0;
-      if (data.has(base) && data.get(base) >= quando) continue;
-      data.set(base, quando);
-      mapa.set(base, `${cfg.SUPABASE_URL}/storage/v1/object/public/fotos/${encodeURIComponent(o.name)}?v=${quando}`);
+      const atual = mapa.get(base);
+      if (atual && atual.quando >= quando) continue;
+      mapa.set(base, { quando, url: `${cfg.SUPABASE_URL}/storage/v1/object/public/fotos/${encodeURIComponent(o.name)}?v=${quando}` });
     }
     if (lista.length < 1000) break;
   }
   return mapa;
 }
 
+// Servidor: escolhe a foto de cada produto.
+//  1) a do próprio servidor (PRODUTO_<id>, vinda do Recover), se existir na pasta dele;
+//  2) a Foto 01 enviada por um PC de cadastro (C_PRODUTO_<id>0);
+//  vale a mais recente das duas.
 async function enviarFotos(cfg, produtos) {
-  const r = await enviarFotosDaPasta(cfg);
+  const r = await enviarFotosDaPasta(cfg, "");
   let mapa;
   try { mapa = await fotosNoSupabase(cfg); }
   catch (e) { log("Aviso: " + e.message); mapa = null; }
   for (const p of produtos) {
-    const base = `PRODUTO_${String(p.id_interno).trim().toUpperCase()}`;
-    if (mapa) p.foto_url = mapa.get(base) || null;
-    else delete p.foto_url; // se não deu para listar, não mexe nas fotos desta vez
+    if (!mapa) { delete p.foto_url; continue; }
+    const id = String(p.id_interno).trim().toUpperCase();
+    const doServidor = mapaFotos.has(`PRODUTO_${id}`) ? mapa.get(`PRODUTO_${id}`) : null;
+    const doCadastro = mapa.get(`C_PRODUTO_${id}0`) || null;
+    let melhor = doServidor;
+    if (doCadastro && (!melhor || doCadastro.quando > melhor.quando)) melhor = doCadastro;
+    p.foto_url = melhor ? melhor.url : null;
   }
   return r;
 }
 
-// Modo do computador do ESTOQUE: só fotos. Envia as novas e já liga a foto
-// ao produto no site, sem esperar o servidor.
+// PCs de cadastro (ESTOQUE, Wender...): só enviam as fotos novas, com prefixo C_.
 async function soFotos(cfg) {
-  const r = await enviarFotosDaPasta(cfg);
-  if (r.novas) {
-    const mapa = await fotosNoSupabase(cfg);
-    for (const { id } of r.ids) {
-      const url = mapa.get(`PRODUTO_${id}`);
-      if (!url) continue;
-      await requisicao(`${cfg.SUPABASE_URL}/rest/v1/produtos?id_interno=eq.${encodeURIComponent(id)}`, {
-        metodo: "PATCH",
-        headers: cabSupabase(cfg, { "Content-Type": "application/json", Prefer: "return=minimal" }),
-        corpo: { foto_url: url }
-      }).catch(() => {});
-    }
-  }
+  const r = await enviarFotosDaPasta(cfg, "C_");
   log(`OK (só fotos): ${r.novas} fotos novas${r.falhas ? `, ${r.falhas} com erro` : ""}. Pasta: ${cfg.PASTA_FOTOS}`);
 }
 
