@@ -301,26 +301,21 @@ async function enviarFotos(cfg, produtos) {
   let mapa;
   try { mapa = await fotosNoSupabase(cfg); }
   catch (e) { log("Aviso: " + e.message); mapa = null; }
-  // tamanho de cada foto da pasta do servidor (para achar cópias)
-  const tam = (base) => { const a = mapaFotos.get(base); if (!a) return -1; try { return fs.statSync(a).size; } catch { return -1; } };
   const ids = new Set(produtos.map(p => String(p.id_interno).trim().toUpperCase()));
   for (const p of produtos) {
     if (!mapa) { delete p.foto_url; continue; }
     const id = String(p.id_interno).trim().toUpperCase();
-    // O Noturno grava PRODUTO_<id>.jpg (principal) e PRODUTO_<id><n>.jpg (Foto n+1).
-    // Os nomes se confundem: PRODUTO_3260 pode ser o produto 3260 OU a Foto 01 do 326.
-    let principal = mapaFotos.has(`PRODUTO_${id}`) ? `PRODUTO_${id}` : null;
-    if (principal && /0$/.test(id)) {
-      const pai = id.slice(0, -1);
-      // se for idêntica à foto do produto "pai", é a Foto 01 dele, não deste produto
-      if (tam(`PRODUTO_${pai}`) === tam(principal)) principal = null;
-    }
-    let foto1 = mapaFotos.has(`PRODUTO_${id}0`) && !ids.has(`${id}0`) ? `PRODUTO_${id}0` : null;
-    const escolhido = principal || foto1;
-    const doServidor = escolhido ? mapa.get(escolhido) : null;
-    const doCadastro = mapa.get(`C_PRODUTO_${id}0`) || null;
-    let melhor = doServidor;
-    if (doCadastro && (!melhor || doCadastro.quando > melhor.quando)) melhor = doCadastro;
+    // Nomes que o Noturno usa:
+    //  PRODUTO_<id>.jpg   -> foto do produto, gerada pelo Recover Image (confiável)
+    //  PRODUTO_<id><n>.jpg -> cópia temporária da Foto n+1, criada ao salvar a foto
+    const cands = [
+      mapaFotos.has(`PRODUTO_${id}`) ? mapa.get(`PRODUTO_${id}`) : null, // Recover do servidor
+      mapa.get(`C_PRODUTO_${id}`),                                      // Recover do PC do Wender
+    ];
+    // cópias temporárias (Foto 01) só quando o nome não é de outro produto
+    if (!ids.has(`${id}0`)) cands.push(mapa.get(`K_PRODUTO_${id}0`), mapa.get(`C_PRODUTO_${id}0`));
+    let melhor = null;
+    for (const c of cands) if (c && (!melhor || c.quando > melhor.quando)) melhor = c;
     p.foto_url = melhor ? melhor.url : null;
   }
   return r;
@@ -328,7 +323,7 @@ async function enviarFotos(cfg, produtos) {
 
 // PCs de cadastro (ESTOQUE, Wender...): só enviam as fotos novas, com prefixo C_.
 async function soFotos(cfg) {
-  const r = await enviarFotosDaPasta(cfg, "C_");
+  const r = await enviarFotosDaPasta(cfg, cfg.PREFIXO || "C_");
   log(`OK (só fotos): ${r.novas} fotos novas${r.falhas ? `, ${r.falhas} com erro` : ""}. Pasta: ${cfg.PASTA_FOTOS}`);
 }
 
