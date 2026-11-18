@@ -301,10 +301,23 @@ async function enviarFotos(cfg, produtos) {
   let mapa;
   try { mapa = await fotosNoSupabase(cfg); }
   catch (e) { log("Aviso: " + e.message); mapa = null; }
+  // tamanho de cada foto da pasta do servidor (para achar cópias)
+  const tam = (base) => { const a = mapaFotos.get(base); if (!a) return -1; try { return fs.statSync(a).size; } catch { return -1; } };
+  const ids = new Set(produtos.map(p => String(p.id_interno).trim().toUpperCase()));
   for (const p of produtos) {
     if (!mapa) { delete p.foto_url; continue; }
     const id = String(p.id_interno).trim().toUpperCase();
-    const doServidor = mapaFotos.has(`PRODUTO_${id}`) ? mapa.get(`PRODUTO_${id}`) : null;
+    // O Noturno grava PRODUTO_<id>.jpg (principal) e PRODUTO_<id><n>.jpg (Foto n+1).
+    // Os nomes se confundem: PRODUTO_3260 pode ser o produto 3260 OU a Foto 01 do 326.
+    let principal = mapaFotos.has(`PRODUTO_${id}`) ? `PRODUTO_${id}` : null;
+    if (principal && /0$/.test(id)) {
+      const pai = id.slice(0, -1);
+      // se for idêntica à foto do produto "pai", é a Foto 01 dele, não deste produto
+      if (tam(`PRODUTO_${pai}`) === tam(principal)) principal = null;
+    }
+    let foto1 = mapaFotos.has(`PRODUTO_${id}0`) && !ids.has(`${id}0`) ? `PRODUTO_${id}0` : null;
+    const escolhido = principal || foto1;
+    const doServidor = escolhido ? mapa.get(escolhido) : null;
     const doCadastro = mapa.get(`C_PRODUTO_${id}0`) || null;
     let melhor = doServidor;
     if (doCadastro && (!melhor || doCadastro.quando > melhor.quando)) melhor = doCadastro;
