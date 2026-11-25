@@ -82,10 +82,23 @@ try {
   if (-not $ok) { Log "ERRO: nao consegui clicar em Recover."; exit 1 }
   Log "Recover iniciado."
 
-  # espera terminar (a tela fecha sozinha)
-  for ($i = 0; $i -lt 100; $i++) {
-    Start-Sleep -Seconds 3
-    if (-not ((JanelasNoturno) | Where-Object { $_.Current.Name -eq "Recover Image" })) { Log "Recover concluido."; exit 0 }
+  # espera terminar: quando a pasta de fotos para de ser gravada por 8 s
+  $pasta = "C:\NoturnoSysUtils\Photos"
+  $inicio = Get-Date
+  Start-Sleep -Seconds 5
+  for ($i = 0; $i -lt 60; $i++) {
+    $ultimo = (Get-ChildItem $pasta -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1).LastWriteTime
+    if ($ultimo -and $ultimo -gt $inicio.AddSeconds(-10) -and ((Get-Date) - $ultimo).TotalSeconds -gt 8) { break }
+    Start-Sleep -Seconds 5
   }
-  Log "Aviso: Recover demorou mais de 5 minutos."
+  $n = @(Get-ChildItem $pasta -File | Where-Object { $_.LastWriteTime -gt $inicio.AddSeconds(-10) }).Count
+  Log "Recover concluido: $n fotos exportadas."
+  # fecha a tela Recover Image, para ninguem achar que travou
+  $dlg = (JanelasNoturno) | Where-Object { $_.Current.Name -eq "Recover Image" } | Select-Object -First 1
+  if ($dlg) {
+    $wp = $null
+    if ($dlg.TryGetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern, [ref]$wp)) { $wp.Close() }
+    else { $sair = $dlg.FindFirst($TS::Descendants, (New-Object System.Windows.Automation.PropertyCondition($A::NameProperty, "Sair"))); if ($sair) { $r = $sair.Current.BoundingRectangle; [W32]::Click([int]($r.X + $r.Width/2), [int]($r.Y + $r.Height/2)) } }
+  }
+  exit 0
 } catch { Log "ERRO: $($_.Exception.Message)" ; exit 1 }
