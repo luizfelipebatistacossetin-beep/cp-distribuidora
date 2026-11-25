@@ -50,11 +50,36 @@ try {
   [W32]::Key(0x0D)             # Enter abre a tela
   Start-Sleep -Seconds 3
 
-  $dlg = (JanelasNoturno) | Where-Object { $_.Current.Name -eq "Recover Image" } | Select-Object -First 1
-  if (-not $dlg) { Log "ERRO: a tela Recover Image nao abriu."; [W32]::Key(0x1B); [W32]::Key(0x1B); exit 1 }
-  $btn = $dlg.FindFirst($TS::Descendants, (New-Object System.Windows.Automation.PropertyCondition($A::NameProperty, "Recover")))
-  if ($btn) { $r = $btn.Current.BoundingRectangle; [W32]::Click([int]($r.X + $r.Width/2), [int]($r.Y + $r.Height/2)) }
-  else { $r = $dlg.Current.BoundingRectangle; [W32]::Click([int]($r.X + 48), [int]($r.Y + 154)) }
+  # espera a tela Recover Image aparecer (ate 20 s)
+  $dlg = $null
+  for ($i = 0; $i -lt 20 -and -not $dlg; $i++) {
+    $dlg = (JanelasNoturno) | Where-Object { $_.Current.Name -eq "Recover Image" } | Select-Object -First 1
+    if (-not $dlg) { Start-Sleep -Seconds 1 }
+  }
+  if (-not $dlg) { Log "ERRO: a tela Recover Image nao abriu."; exit 1 }
+  Start-Sleep -Seconds 2
+
+  # clica em Recover e confere se comecou (aparece "Conectando" ou a tela fecha). Ate 4 tentativas.
+  $ok = $false
+  for ($t = 1; $t -le 4 -and -not $ok; $t++) {
+    $dh = [IntPtr]$dlg.Current.NativeWindowHandle
+    [W32]::Key(0x12); [W32]::SetForegroundWindow($dh) | Out-Null
+    Start-Sleep -Milliseconds 600
+    $btn = $dlg.FindFirst($TS::Descendants, (New-Object System.Windows.Automation.PropertyCondition($A::NameProperty, "Recover")))
+    if ($t -eq 3) { [W32]::Key(0x0D); $como = "Enter" }
+    elseif ($btn) {
+      $ip = $null
+      if ($t -eq 2 -and $btn.TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern, [ref]$ip)) { $ip.Invoke(); $como = "Invoke" }
+      else { $r = $btn.Current.BoundingRectangle; [W32]::Click([int]($r.X + $r.Width/2), [int]($r.Y + $r.Height/2)); $como = "clique no botao" }
+    } else { $r = $dlg.Current.BoundingRectangle; [W32]::Click([int]($r.X + 48), [int]($r.Y + 154)); $como = "clique na posicao" }
+    for ($k = 0; $k -lt 8 -and -not $ok; $k++) {
+      Start-Sleep -Seconds 1
+      $j = JanelasNoturno
+      if (($j | Where-Object { $_.Current.Name -match "Conectando|aguarde" }) -or -not ($j | Where-Object { $_.Current.Name -eq "Recover Image" })) { $ok = $true }
+    }
+    Log "Tentativa $t ($como): $(if ($ok) {'comecou'} else {'nao comecou'})"
+  }
+  if (-not $ok) { Log "ERRO: nao consegui clicar em Recover."; exit 1 }
   Log "Recover iniciado."
 
   # espera terminar (a tela fecha sozinha)
