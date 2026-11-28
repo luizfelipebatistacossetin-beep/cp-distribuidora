@@ -46,7 +46,7 @@ function JanelasNoturno() {
 
 try {
   $jan = JanelasNoturno
-  if (-not $jan.Count) { Log "Noturno fechado - nada feito."; exit 0 }
+  if (-not $jan.Count) { Log "Noturno fechado - nada feito."; Reagendar; exit 0 }
   $main = $jan | Sort-Object { $_.Current.BoundingRectangle.Width * $_.Current.BoundingRectangle.Height } -Descending | Select-Object -First 1
   $h = [IntPtr]$main.Current.NativeWindowHandle
   [W32]::ShowWindow($h, 3) | Out-Null          # maximiza
