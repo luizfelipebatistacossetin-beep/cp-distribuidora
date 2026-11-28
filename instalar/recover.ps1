@@ -21,6 +21,22 @@ public class W32 {
 $A = [System.Windows.Automation.AutomationElement]
 $TS = [System.Windows.Automation.TreeScope]
 
+# Se falhar, agenda nova tentativa em 20 min (no maximo 4 por dia)
+function Reagendar($motivo) {
+  try {
+    $cnt = "C:\PonteCPFotos\recover-tentativas.txt"; $hoje = Get-Date -Format 'yyyyMMdd'
+    $n = 0; if (Test-Path $cnt) { $l = (Get-Content $cnt) -split ';'; if ($l[0] -eq $hoje) { $n = [int]$l[1] } }
+    if ($n -ge 4) { Log "Sem mais tentativas hoje."; return }
+    Set-Content $cnt "$hoje;$($n+1)"
+    $a = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File C:\PonteCPFotos\robo-recover.ps1"
+    $t = New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(20)
+    $u = New-ScheduledTaskPrincipal -UserId "$env:USERDOMAIN\$env:USERNAME" -LogonType Interactive -RunLevel Limited
+    $s = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes 10) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+    Register-ScheduledTask -TaskName "RoboRecoverCP-repetir" -Action $a -Trigger $t -Principal $u -Settings $s -Force | Out-Null
+    Log "Nova tentativa agendada para $((Get-Date).AddMinutes(20).ToString('HH:mm'))."
+  } catch { Log "Nao consegui reagendar: $($_.Exception.Message)" }
+}
+
 function JanelasNoturno() {
   $p = Get-Process NOTURNO -ErrorAction SilentlyContinue | Select-Object -First 1
   if (-not $p) { return @() }
@@ -56,7 +72,7 @@ try {
     $dlg = (JanelasNoturno) | Where-Object { $_.Current.Name -eq "Recover Image" } | Select-Object -First 1
     if (-not $dlg) { Start-Sleep -Seconds 1 }
   }
-  if (-not $dlg) { Log "ERRO: a tela Recover Image nao abriu."; exit 1 }
+  if (-not $dlg) { Log "ERRO: a tela Recover Image nao abriu."; Reagendar; exit 1 }
   Start-Sleep -Seconds 2
 
   # clica em Recover e confere se comecou (aparece "Conectando" ou a tela fecha). Ate 4 tentativas.
@@ -79,7 +95,7 @@ try {
     }
     Log "Tentativa $t ($como): $(if ($ok) {'comecou'} else {'nao comecou'})"
   }
-  if (-not $ok) { Log "ERRO: nao consegui clicar em Recover."; exit 1 }
+  if (-not $ok) { Log "ERRO: nao consegui clicar em Recover."; Reagendar; exit 1 }
   Log "Recover iniciado."
 
   # espera terminar: quando a pasta de fotos para de ser gravada por 8 s
@@ -101,4 +117,4 @@ try {
     else { $sair = $dlg.FindFirst($TS::Descendants, (New-Object System.Windows.Automation.PropertyCondition($A::NameProperty, "Sair"))); if ($sair) { $r = $sair.Current.BoundingRectangle; [W32]::Click([int]($r.X + $r.Width/2), [int]($r.Y + $r.Height/2)) } }
   }
   exit 0
-} catch { Log "ERRO: $($_.Exception.Message)" ; exit 1 }
+} catch { Log "ERRO: $($_.Exception.Message)" ; Reagendar; exit 1 }
